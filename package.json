@@ -1,0 +1,47 @@
+{
+  "name": "ledger-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.js",
+  "scripts": {
+    "test": "mocha ./test/*.test.js --watch",
+    "testOnce": "mocha ./test/*.test.js",
+    "start": "npm run start-server & npm run build-watch",
+    "start-server": "nodemon --watch server -e js,html server/app.js",
+    "build-watch": "webpack -w",
+    "seed": "node ./bin/seed"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.2",
+    "chalk": "^2.4.1",
+    "express": "^4.14.0",
+    "pg": "^7.4.3",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "sequelize": "^4.37.8",
+    "volleyball": "^1.5.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "nodemon": "^1.14.11",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Judith-Lao/ledger-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Judith-Lao/ledger-app/issues"
+  },
+  "homepage": "https://github.com/Judith-Lao/ledger-app#readme"
+}
