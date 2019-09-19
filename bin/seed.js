@@ -28,19 +28,19 @@ async function seed() {
   ])
   console.log(`seeded ${Accounts.length} accounts`);
 
-  const Transactions = await Promise.all([
-    Transaction.create({
-      incomingAmount: 5,
-      outgoingAmount: null,
-      accountId: 2
-    }),
-    Transaction.create({
-      incomingAmount: null,
-      outgoingAmount: 7,
-      accountId: 1
-    })
-  ]);
-  console.log(`seeded ${Transactions.length} transactions`);
+  // const Transactions = await Promise.all([
+  //   Transaction.create({
+  //     incomingAmount: 5,
+  //     outgoingAmount: null,
+  //     accountId: 2
+  //   }),
+  //   Transaction.create({
+  //     incomingAmount: null,
+  //     outgoingAmount: 7,
+  //     accountId: 1
+  //   })
+  // ]);
+  // console.log(`seeded ${Transactions.length} transactions`);
 
   console.log(`seeded everything successfully`);
 }
