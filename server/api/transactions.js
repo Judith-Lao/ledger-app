@@ -1,10 +1,11 @@
 const router = require('express').Router()
-const Transaction = require('../db/transaction')
+const IncomingTransaction = require('../db/incomingTransaction')
+const OutgoingTransaction = require('../db/outgoingTransaction')
 
 router.get("/", async (req, res, next) => {
   try {
-    let allTransactions = await Transaction.findAll()
-    res.send(allTransactions)
+    let incomingTransactions = await IncomingTransaction.findAll()
+    res.send(incomingTransactions)
   } catch (error) {
     console.error(error)
   }

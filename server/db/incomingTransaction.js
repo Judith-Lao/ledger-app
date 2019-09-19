@@ -3,13 +3,13 @@
 const Sequelize = require('sequelize');
 const db = require('./database');
 
-const Transaction = db.define('transaction', {
+const IncomingTransaction = db.define('incoming transaction', {
   incomingAmount: {
     type: Sequelize.INTEGER,
   },
-  outgoingAmount: {
-    type: Sequelize.INTEGER
+  isConversion: {
+    type: Sequelize.BOOLEAN
   }
 });
 
-module.exports = Transaction;
+module.exports = IncomingTransaction;
