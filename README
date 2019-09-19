@@ -1,0 +1,54 @@
+Prompt
+
+At TransferWise, we offer a product for users where they can store balance in many
+different currencies. For this exercise we will ask you to develop a balances ledger. A user
+owns stores balance in a specific currency for each balance account, you can sign up on
+TransferWise for reference.
+
+User Stories
+1) As a user, I would like to open a balance account in one of the available currencies (see list
+of Available Balance Currencies below), USD, EUR, BRL, INR
+2) As a user, I would like to “top up” (add balance) to one of the balances available
+3) As a user with more than one balance account, I would like to transfer money from one
+balance to another
+4) As a user I would like to see view all of the “top up” and currency conversion transactions I
+have completed (the ledger)
+It’s ok if you don’t get to all of them, but try to prioritize a working full stack solution.
+
+Balances
+As noted, a user can have many balance accounts associated with them. They need to be
+able to add money and convert money between accounts. Note that I
+Not included In Requirements
+[User Authentication] Don’t worry about this for now
+[Live Exchange rates] Feel free to hardcode the google exchange rates
+
+
+Grading Criteria
+This is a very open ended problem and there are quite a few places to put more focus than
+others in order to get the application done in a timely fashion.
+
+Database: You should have a relational database (one of Postgres, mariadb, mysql) with which your
+server stores the transactions
+
+Server: Feel free to use one of: JS, Python, Java, Ruby. Feel free to use any framework you’re
+comfortable with.
+
+Frontend: Frontend application (preferably React) that displays the items.
+
+Requirements
+All data presented to the user should be saved in a database
+There should be unit test coverage for as much of the application as you can (preferably
+focusing on the backend)
+Application setup should be carefully documented and tests should be easy to run
+The API should be RESTful and thoughtfully constructed
+The relational model that you come up with should be ____
+
+Nice to haves
+A clean design and user experience for the stories using a frontend design framework
+Frontend tests
+
+Written Portion
+Here’s a chance for you to showcase your thought one or a few of the important or
+challenging decisions you made while developing this application. Feel free to pick one or
+two decisions and write longer explanations so we can have a good understanding of your
+critical thinking and writing skills.
