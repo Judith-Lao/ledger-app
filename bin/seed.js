@@ -1,6 +1,6 @@
 "use strict";
 
-const { db, Account, Transaction, User } = require("../server/db");
+const { db, Account, IncomingTransaction, OutgoingTransaction, conversion, User } = require("../server/db");
 
 async function seed() {
   await db.sync({ force: true });
@@ -29,16 +29,25 @@ async function seed() {
   console.log(`seeded ${Accounts.length} accounts`);
 
   const Transactions = await Promise.all([
-    Transaction.create({
+    IncomingTransaction.create({
       incomingAmount: 5,
-      outgoingAmount: null,
+      isConversion: true,
       accountId: 2
     }),
-    Transaction.create({
-      incomingAmount: null,
-      outgoingAmount: 7,
+    IncomingTransaction.create({
+      incomingAmount: 10,
+      isConversion: false,
+      accountId: 1
+    }),
+    OutgoingTransaction.create({
+      outgoingAmount: 7.20,
+      isConversion: true,
       accountId: 1
     })
+    // conversion.create({
+    //   incomingTransactionId: 2,
+    //   outgoingTransactionId: 1
+    // })
   ]);
   console.log(`seeded ${Transactions.length} transactions`);
 
