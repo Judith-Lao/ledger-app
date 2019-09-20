@@ -192,6 +192,10 @@ var _AddAccount = __webpack_require__(/*! ./AddAccount */ "./client/components/A
 
 var _AddAccount2 = _interopRequireDefault(_AddAccount);
 
+var _DepositMoney = __webpack_require__(/*! ./DepositMoney */ "./client/components/DepositMoney.js");
+
+var _DepositMoney2 = _interopRequireDefault(_DepositMoney);
+
 var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
 var _axios2 = _interopRequireDefault(_axios);
@@ -217,7 +221,7 @@ var Accounts = function (_Component) {
     _this.state = {
       accounts: []
     };
-    _this.addNewAccount = _this.addNewAccount.bind(_this);
+    _this.incorporateUpdates = _this.incorporateUpdates.bind(_this);
     return _this;
   }
 
@@ -257,7 +261,7 @@ var Accounts = function (_Component) {
       return componentDidMount;
     }()
   }, {
-    key: 'addNewAccount',
+    key: 'incorporateUpdates',
     value: function () {
       var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
         var _ref4, data;
@@ -285,11 +289,11 @@ var Accounts = function (_Component) {
         }, _callee2, this);
       }));
 
-      function addNewAccount() {
+      function incorporateUpdates() {
         return _ref3.apply(this, arguments);
       }
 
-      return addNewAccount;
+      return incorporateUpdates;
     }()
   }, {
     key: 'render',
@@ -307,7 +311,12 @@ var Accounts = function (_Component) {
         _react2.default.createElement(
           'div',
           null,
-          _react2.default.createElement(_AddAccount2.default, { add: this.addNewAccount })
+          _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates })
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates })
         )
       );
     }
@@ -366,7 +375,7 @@ var AddAccount = function (_Component) {
 
     _this.state = {
       type: '',
-      amount: ''
+      amount: 0
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
@@ -391,7 +400,7 @@ var AddAccount = function (_Component) {
                 return _axios2.default.post('/api/accounts', this.state);
 
               case 3:
-                this.props.add(); //so that you don't need to refresh to see the new account
+                this.props.autorefresh();
                 this.setState({
                   type: '',
                   amount: ''
@@ -447,6 +456,131 @@ var AddAccount = function (_Component) {
 }(_react.Component);
 
 exports.default = AddAccount;
+
+/***/ }),
+
+/***/ "./client/components/DepositMoney.js":
+/*!*******************************************!*\
+  !*** ./client/components/DepositMoney.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DepositMoney = function (_Component) {
+  _inherits(DepositMoney, _Component);
+
+  function DepositMoney(props) {
+    _classCallCheck(this, DepositMoney);
+
+    var _this = _possibleConstructorReturn(this, (DepositMoney.__proto__ || Object.getPrototypeOf(DepositMoney)).call(this, props));
+
+    _this.state = {
+      accountId: 0,
+      amount: 0
+    };
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.handleChange = _this.handleChange.bind(_this);
+    return _this;
+  }
+
+  _createClass(DepositMoney, [{
+    key: 'handleChange',
+    value: function handleChange(event) {
+      this.setState(_defineProperty({}, event.target.name, event.target.value));
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function () {
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                event.preventDefault();
+                _context.next = 3;
+                return _axios2.default.post('/api/transactions/incoming', this.state);
+
+              case 3:
+                this.props.autorefresh();
+
+              case 4:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function handleSubmit(_x) {
+        return _ref.apply(this, arguments);
+      }
+
+      return handleSubmit;
+    }()
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'form',
+          null,
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'type' },
+            'Account #'
+          ),
+          _react2.default.createElement('input', { type: 'text', name: 'account', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'amount' },
+            'How much money would you like to deposit?'
+          ),
+          _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'button',
+            { type: 'button', onClick: this.handleSubmit },
+            'Deposit'
+          )
+        )
+      );
+    }
+  }]);
+
+  return DepositMoney;
+}(_react.Component);
+
+exports.default = DepositMoney;
 
 /***/ }),
 

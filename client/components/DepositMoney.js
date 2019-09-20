@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 
-export default class AddAccount extends Component {
+export default class DepositMoney extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      type: '',
+      accountId: 0,
       amount: 0
     }
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -20,13 +20,8 @@ export default class AddAccount extends Component {
 
   async handleSubmit(event) {
     event.preventDefault()
-    await axios.post('/api/accounts', this.state)
+    await axios.post('/api/transactions/incoming', this.state)
     this.props.autorefresh()
-    this.setState({
-      type: '',
-      amount: ''
-    })
-    //fix this so that this clears the field upon submit
   }
 
   render() {
@@ -34,14 +29,14 @@ export default class AddAccount extends Component {
     <div>
       <form>
 
-        <label htmlFor="type">Type of Currency:</label>
-        <input type ="text" name="type" onChange={this.handleChange}/>
+        <label htmlFor="type">Account #</label>
+        <input type ="text" name="account" onChange={this.handleChange}/>
 
-        <label htmlFor="amount">Amount:</label>
+        <label htmlFor="amount">How much money would you like to deposit?</label>
         <input type ="text" name="amount" onChange={this.handleChange}/>
 
         <button type="button" onClick={this.handleSubmit}>
-        New Account
+        Deposit
         </button>
 
       </form>
@@ -49,6 +44,4 @@ export default class AddAccount extends Component {
     )}
 
 }
-
-
 
