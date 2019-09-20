@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import SingleAccount from './SingleAccount'
 import AddAccount from './AddAccount'
+import DepositMoney from './DepositMoney'
 import axios from 'axios'
 
 export default class Accounts extends Component {
@@ -10,7 +11,7 @@ export default class Accounts extends Component {
     this.state = {
       accounts: []
     }
-    this.addNewAccount = this.addNewAccount.bind(this)
+    this.incorporateUpdates = this.incorporateUpdates.bind(this)
   }
 
   async componentDidMount() {
@@ -20,10 +21,8 @@ export default class Accounts extends Component {
     })
   }
 
-  async addNewAccount () {
-    //passing callback function down to AddAccount, but there is a better way to
-    //grab input from AddAccount and pass to parent component
-    //(repeats componentDidMount code)
+  async incorporateUpdates () {
+    //there has to be a better way than a callback function to autorefresh, because this repeats componentDidMount code
     const {data} = await axios.get('/api/accounts')
     this.setState({
       accounts: data
@@ -38,7 +37,11 @@ export default class Accounts extends Component {
         </div>
 
         <div>
-          <AddAccount add={this.addNewAccount}/>
+          <AddAccount autorefresh={this.incorporateUpdates}/>
+        </div>
+
+        <div>
+          <DepositMoney autorefresh={this.incorporateUpdates}/>
         </div>
 
       </div>

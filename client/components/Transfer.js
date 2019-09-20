@@ -6,7 +6,7 @@ export default class AddAccount extends Component {
     super(props)
     this.state = {
       type: '',
-      amount: 0
+      amount: ''
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -49,6 +49,4 @@ export default class AddAccount extends Component {
     )}
 
 }
-
-
 
