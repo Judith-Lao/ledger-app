@@ -17,7 +17,7 @@ router.post("/incoming", async (req, res, next) => {
     //documents that you've deposited something in transactions
     await IncomingTransaction.create({
     accountId: req.body.account,
-    isConversion: false,
+    isConversion: req.body.isConversion,
     incomingAmount: req.body.amount
     })
     //reflects this deposit in your account balance

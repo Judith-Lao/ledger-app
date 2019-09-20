@@ -6,6 +6,7 @@ export default class DepositMoney extends Component {
     super(props)
     this.state = {
       accountId: 0,
+      isConversion: false,
       amount: 0
     }
     this.handleSubmit = this.handleSubmit.bind(this)

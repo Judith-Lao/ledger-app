@@ -196,6 +196,10 @@ var _DepositMoney = __webpack_require__(/*! ./DepositMoney */ "./client/componen
 
 var _DepositMoney2 = _interopRequireDefault(_DepositMoney);
 
+var _Transfer = __webpack_require__(/*! ./Transfer */ "./client/components/Transfer.js");
+
+var _Transfer2 = _interopRequireDefault(_Transfer);
+
 var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
 var _axios2 = _interopRequireDefault(_axios);
@@ -242,11 +246,14 @@ var Accounts = function (_Component) {
                 _ref2 = _context.sent;
                 data = _ref2.data;
 
+                data.sort(function (a, b) {
+                  return a.id - b.id;
+                });
                 this.setState({
                   accounts: data
                 });
 
-              case 5:
+              case 6:
               case 'end':
                 return _context.stop();
             }
@@ -277,11 +284,14 @@ var Accounts = function (_Component) {
                 _ref4 = _context2.sent;
                 data = _ref4.data;
 
+                data.sort(function (a, b) {
+                  return a.id - b.id;
+                });
                 this.setState({
                   accounts: data
                 });
 
-              case 5:
+              case 6:
               case 'end':
                 return _context2.stop();
             }
@@ -317,6 +327,11 @@ var Accounts = function (_Component) {
           'div',
           null,
           _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates })
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
         )
       );
     }
@@ -505,6 +520,7 @@ var DepositMoney = function (_Component) {
 
     _this.state = {
       accountId: 0,
+      isConversion: false,
       amount: 0
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
@@ -753,6 +769,172 @@ var Accounts = function (_Component) {
 }(_react.Component);
 
 exports.default = Accounts;
+
+/***/ }),
+
+/***/ "./client/components/Transfer.js":
+/*!***************************************!*\
+  !*** ./client/components/Transfer.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Transfer = function (_Component) {
+  _inherits(Transfer, _Component);
+
+  function Transfer(props) {
+    _classCallCheck(this, Transfer);
+
+    var _this = _possibleConstructorReturn(this, (Transfer.__proto__ || Object.getPrototypeOf(Transfer)).call(this, props));
+
+    _this.state = {
+      from_accountId: 0,
+      conversion: '',
+      amount: 0,
+      to_accountId: 0,
+      overdraft: ''
+    };
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.handleChange = _this.handleChange.bind(_this);
+    _this.isOverdraft = _this.isOverdraft.bind(_this);
+    _this.transferOrConversion = _this.transferOrConversion.bind(_this);
+    return _this;
+  }
+
+  _createClass(Transfer, [{
+    key: 'handleChange',
+    value: function handleChange(event) {
+      this.setState(_defineProperty({}, event.target.name, event.target.value));
+    }
+  }, {
+    key: 'isOverdraft',
+    value: function isOverdraft(accounts) {
+      var _this2 = this;
+
+      if (this.state.amount > accounts[this.state.from_accountId - 1].amount) {
+        //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+        this.setState({ overdraft: true });
+        setTimeout(function () {
+          _this2.setState({ overdraft: false });
+        }, 3000);
+      }
+    }
+  }, {
+    key: 'transferOrConversion',
+    value: function transferOrConversion(accounts) {
+      if (accounts[this.state.from_accountId - 1].type == accounts[this.state.to_accountId - 1].type) {
+        this.setState({ conversion: false });
+      } else {
+        this.setState({ conversion: true });
+      }
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function () {
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+        var accounts;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                accounts = this.props.accounts;
+
+                event.preventDefault();
+                this.isOverdraft(accounts);
+                this.transferOrConversion(accounts);
+                // await axios.post('/api/transactions/incoming', this.state)
+                // await axios.post('/api/transactions/outgoing', this.state)
+                this.props.autorefresh();
+
+              case 5:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function handleSubmit(_x) {
+        return _ref.apply(this, arguments);
+      }
+
+      return handleSubmit;
+    }()
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'form',
+          null,
+          this.state.overdraft ? _react2.default.createElement(
+            'div',
+            null,
+            'Sorry, you do not have enough money in this account to transfer.'
+          ) : null,
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'type' },
+            'Transfer from Account #:'
+          ),
+          _react2.default.createElement('input', { type: 'text', name: 'from_accountId', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'amount' },
+            'How much money would you like to transfer out of this account?'
+          ),
+          _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'label',
+            { htmlFor: 'amount' },
+            'Into Account #:'
+          ),
+          _react2.default.createElement('input', { type: 'text', name: 'to_accountId', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'button',
+            { type: 'button', onClick: this.handleSubmit },
+            'Transfer'
+          )
+        )
+      );
+    }
+  }]);
+
+  return Transfer;
+}(_react.Component);
+
+exports.default = Transfer;
 
 /***/ }),
 

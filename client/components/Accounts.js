@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import SingleAccount from './SingleAccount'
 import AddAccount from './AddAccount'
 import DepositMoney from './DepositMoney'
+import Transfer from './Transfer'
 import axios from 'axios'
 
 export default class Accounts extends Component {
@@ -16,6 +17,7 @@ export default class Accounts extends Component {
 
   async componentDidMount() {
     const {data} = await axios.get('/api/accounts')
+    data.sort(function(a,b) {return a.id - b.id})
     this.setState({
       accounts: data
     })
@@ -24,6 +26,7 @@ export default class Accounts extends Component {
   async incorporateUpdates () {
     //there has to be a better way than a callback function to autorefresh, because this repeats componentDidMount code
     const {data} = await axios.get('/api/accounts')
+    data.sort(function(a,b) {return a.id - b.id})
     this.setState({
       accounts: data
     })
@@ -44,6 +47,9 @@ export default class Accounts extends Component {
           <DepositMoney autorefresh={this.incorporateUpdates}/>
         </div>
 
+        <div>
+          <Transfer autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
+        </div>
       </div>
     )
   }
