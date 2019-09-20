@@ -44,7 +44,7 @@ export default class Accounts extends Component {
         </div>
 
         <div>
-          <DepositMoney autorefresh={this.incorporateUpdates}/>
+          <DepositMoney autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
         </div>
 
         <div>

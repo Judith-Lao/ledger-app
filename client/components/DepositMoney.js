@@ -21,6 +21,7 @@ export default class DepositMoney extends Component {
 
   async handleSubmit(event) {
     event.preventDefault()
+    console.log(this.state)
     await axios.post('/api/transactions/incoming', this.state)
     this.props.autorefresh()
   }
@@ -31,7 +32,7 @@ export default class DepositMoney extends Component {
       <form>
 
         <label htmlFor="type">Account #</label>
-        <input type ="text" name="account" onChange={this.handleChange}/>
+        <input type ="text" name="accountId" onChange={this.handleChange}/>
 
         <label htmlFor="amount">How much money would you like to deposit?</label>
         <input type ="text" name="amount" onChange={this.handleChange}/>
@@ -45,4 +46,3 @@ export default class DepositMoney extends Component {
     )}
 
 }
-

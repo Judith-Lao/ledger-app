@@ -16,12 +16,12 @@ router.post("/incoming", async (req, res, next) => {
   try {
     //documents that you've deposited something in transactions
     await IncomingTransaction.create({
-    accountId: req.body.account,
+    accountId: req.body.accountId,
     isConversion: req.body.isConversion,
     incomingAmount: req.body.amount
     })
     //reflects this deposit in your account balance
-    let account = await Account.findById(req.body.account)
+    let account = await Account.findById(req.body.accountId)
     let currentBalance = account.amount
     await account.update({amount: Number(currentBalance)+Number(req.body.amount)})
     res.sendStatus(200)
@@ -43,12 +43,12 @@ router.post("/outgoing", async (req, res, next) => {
   try {
     //documents that you've withdrawn something in transactions
     await OutgoingTransaction.create({
-    accountId: req.body.account,
+    accountId: req.body.accountId,
     isConversion: false,
     outgoingAmount: req.body.amount
     })
     //reflects this withdrawal in your account balance
-    let account = await Account.findById(req.body.account)
+    let account = await Account.findById(req.body.accountId)
     let currentBalance = account.amount
     await account.update({amount: Number(currentBalance)-Number(req.body.amount)})
     res.sendStatus(200)
