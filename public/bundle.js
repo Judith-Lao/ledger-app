@@ -326,7 +326,7 @@ var Accounts = function (_Component) {
         _react2.default.createElement(
           'div',
           null,
-          _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates })
+          _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
         ),
         _react2.default.createElement(
           'div',
@@ -542,13 +542,14 @@ var DepositMoney = function (_Component) {
             switch (_context.prev = _context.next) {
               case 0:
                 event.preventDefault();
-                _context.next = 3;
+                console.log(this.state);
+                _context.next = 4;
                 return _axios2.default.post('/api/transactions/incoming', this.state);
 
-              case 3:
+              case 4:
                 this.props.autorefresh();
 
-              case 4:
+              case 5:
               case 'end':
                 return _context.stop();
             }
@@ -576,7 +577,7 @@ var DepositMoney = function (_Component) {
             { htmlFor: 'type' },
             'Account #'
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'account', onChange: this.handleChange }),
+          _react2.default.createElement('input', { type: 'text', name: 'accountId', onChange: this.handleChange }),
           _react2.default.createElement(
             'label',
             { htmlFor: 'amount' },
@@ -825,7 +826,6 @@ var Transfer = function (_Component) {
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
-    _this.isOverdraft = _this.isOverdraft.bind(_this);
     _this.transferOrConversion = _this.transferOrConversion.bind(_this);
     return _this;
   }
@@ -834,19 +834,6 @@ var Transfer = function (_Component) {
     key: 'handleChange',
     value: function handleChange(event) {
       this.setState(_defineProperty({}, event.target.name, event.target.value));
-    }
-  }, {
-    key: 'isOverdraft',
-    value: function isOverdraft(accounts) {
-      var _this2 = this;
-
-      if (this.state.amount > accounts[this.state.from_accountId - 1].amount) {
-        //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
-        this.setState({ overdraft: true });
-        setTimeout(function () {
-          _this2.setState({ overdraft: false });
-        }, 3000);
-      }
     }
   }, {
     key: 'transferOrConversion',
@@ -861,6 +848,8 @@ var Transfer = function (_Component) {
     key: 'handleSubmit',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+        var _this2 = this;
+
         var accounts;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -869,13 +858,22 @@ var Transfer = function (_Component) {
                 accounts = this.props.accounts;
 
                 event.preventDefault();
-                this.isOverdraft(accounts);
-                this.transferOrConversion(accounts);
+
+                if (this.state.amount > accounts[this.state.from_accountId - 1].amount) {
+                  //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+                  this.setState({ overdraft: true });
+                  setTimeout(function () {
+                    _this2.setState({ overdraft: false });
+                  }, 3000);
+                } else {
+                  this.transferOrConversion(accounts);
+                }
+
                 // await axios.post('/api/transactions/incoming', this.state)
                 // await axios.post('/api/transactions/outgoing', this.state)
                 this.props.autorefresh();
 
-              case 5:
+              case 4:
               case 'end':
                 return _context.stop();
             }

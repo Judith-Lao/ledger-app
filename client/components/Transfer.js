@@ -13,7 +13,6 @@ export default class Transfer extends Component {
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
-    this.isOverdraft = this.isOverdraft.bind(this)
     this.transferOrConversion = this.transferOrConversion.bind(this)
   }
 
@@ -21,16 +20,6 @@ export default class Transfer extends Component {
     this.setState({
       [event.target.name]: event.target.value
     })
-  }
-
-  isOverdraft(accounts) {
-    if (this.state.amount > accounts[this.state.from_accountId -1].amount) {
-      //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
-      this.setState({overdraft: true})
-      setTimeout(() => {
-        this.setState({overdraft: false})}, 3000
-      )
-    }
   }
 
   transferOrConversion(accounts) {
@@ -45,8 +34,19 @@ export default class Transfer extends Component {
   async handleSubmit(event) {
     let accounts = this.props.accounts
     event.preventDefault()
-    this.isOverdraft(accounts)
-    this.transferOrConversion(accounts)
+
+    if (this.state.amount > accounts[this.state.from_accountId -1].amount) {
+      //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+      this.setState({overdraft: true})
+      setTimeout(() => {
+        this.setState({overdraft: false})}, 3000
+      )
+    }
+
+    else {
+      this.transferOrConversion(accounts)
+    }
+
     // await axios.post('/api/transactions/incoming', this.state)
     // await axios.post('/api/transactions/outgoing', this.state)
     this.props.autorefresh()
