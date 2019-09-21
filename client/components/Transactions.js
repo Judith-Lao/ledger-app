@@ -12,7 +12,8 @@ export default class Accounts extends Component {
   }
 
   async componentDidMount () {
-    const {data} = await axios.get('/api/transactions')
+    //fix so that you hit both api routes for incoming and outgoing
+    const {data} = await axios.get('/api/transactions/incoming')
     this.setState({
       transactions: data
     })

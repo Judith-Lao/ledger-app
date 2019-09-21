@@ -24,7 +24,7 @@ export default class Accounts extends Component {
   }
 
   async incorporateUpdates () {
-    //there has to be a better way than a callback function to autorefresh, because this repeats componentDidMount code
+    //what is a better way than a callback function to autorefresh, because this repeats componentDidMount code
     const {data} = await axios.get('/api/accounts')
     data.sort(function(a,b) {return a.id - b.id})
     this.setState({

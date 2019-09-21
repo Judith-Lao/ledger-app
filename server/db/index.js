@@ -3,6 +3,7 @@ const User = require('./user')
 const Account = require('./account')
 const IncomingTransaction = require('./incomingTransaction')
 const OutgoingTransaction = require('./outgoingTransaction')
+const Transfer = require('./transfer')
 
 User.hasMany(Account)
 Account.belongsTo(User)
@@ -12,14 +13,14 @@ OutgoingTransaction.belongsTo(Account)
 
 //join table
 //belongs to Many so you can use a join table, even though it's only one to one
-IncomingTransaction.belongsToMany(OutgoingTransaction, {through: 'conversion', foreignKey: 'incomingTransactionId'})
-OutgoingTransaction.belongsToMany(IncomingTransaction, {through: 'conversion', foreignKey: 'outgoingTransactionId'})
+IncomingTransaction.belongsToMany(OutgoingTransaction, {through: 'transfer', foreignKey: 'incomingTransactionId'})
+OutgoingTransaction.belongsToMany(IncomingTransaction, {through: 'transfer', foreignKey: 'outgoingTransactionId'})
 
 module.exports = {
   db,
   User,
   Account,
   IncomingTransaction,
-  OutgoingTransaction
-  // conversion
+  OutgoingTransaction,
+  Transfer
 }

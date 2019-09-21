@@ -31,17 +31,17 @@ async function seed() {
   const Transactions = await Promise.all([
     IncomingTransaction.create({
       incomingAmount: 5,
-      isConversion: true,
+      isTransfer: true,
       accountId: 2
     }),
     IncomingTransaction.create({
       incomingAmount: 10,
-      isConversion: false,
+      isTransfer: false,
       accountId: 1
     }),
     OutgoingTransaction.create({
       outgoingAmount: 7.20,
-      isConversion: true,
+      isTransfer: true,
       accountId: 1
     })
     // conversion.create({

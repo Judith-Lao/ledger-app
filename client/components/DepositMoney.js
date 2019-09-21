@@ -6,8 +6,9 @@ export default class DepositMoney extends Component {
     super(props)
     this.state = {
       accountId: 0,
-      isConversion: false,
-      amount: 0
+      isTransfer: false,
+      amount: 0,
+      invalid: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
@@ -21,16 +22,23 @@ export default class DepositMoney extends Component {
 
   async handleSubmit(event) {
     event.preventDefault()
-    console.log(this.state)
-    await axios.post('/api/transactions/incoming', this.state)
-    this.props.autorefresh()
+    if(this.state.accountId > this.props.accounts.length) {
+      this.setState({invalid: true})
+      setTimeout(() => {
+        this.setState({invalid: false})}, 3000
+      )
+    }
+    else {
+      await axios.post('/api/transactions/incoming', this.state)
+      this.props.autorefresh()
+    }
   }
 
   render() {
     return(
     <div>
       <form>
-
+      {this.state.invalid ? <div>This account does not exist. </div>: null}
         <label htmlFor="type">Account #</label>
         <input type ="text" name="accountId" onChange={this.handleChange}/>
 
