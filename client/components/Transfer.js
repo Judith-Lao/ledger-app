@@ -6,7 +6,7 @@ export default class Transfer extends Component {
     super(props)
     this.state = {
       from_accountId: 0,
-      conversion: '',
+      isTransfer: '',
       amount: 0,
       to_accountId: 0,
       overdraft: ''
@@ -23,17 +23,19 @@ export default class Transfer extends Component {
   }
 
   transferOrConversion(accounts) {
-    if (accounts[this.state.from_accountId-1].type == accounts[this.state.to_accountId-1].type) {
-      this.setState({conversion: false})
+    //currently relies on all accounts belonging to one person, because this checks the type of the accounts based on their position in the array, but this will not work if [{id:0}, {id:4}]
+    if (accounts[this.state.from_accountId-1].type === accounts[this.state.to_accountId-1].type) {
+      this.setState({isTransfer: true})
     }
     else {
-      this.setState({conversion: true})
+      this.setState({isTransfer: false})
     }
   }
 
   async handleSubmit(event) {
     let accounts = this.props.accounts
     event.preventDefault()
+    await this.transferOrConversion(accounts)
 
     if (this.state.amount > accounts[this.state.from_accountId -1].amount) {
       //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
@@ -44,12 +46,34 @@ export default class Transfer extends Component {
     }
 
     else {
-      this.transferOrConversion(accounts)
+      if (this.state.isTransfer) {
+        await axios.post('/api/transactions/incoming', {
+          accountId: this.state.to_accountId,
+          isTransfer: this.state.isTransfer,
+          //is there a disadvantage to hardcoding this to be true?
+          amount: this.state.amount
+        })
+        await axios.post('/api/transactions/outgoing', {
+          accountId: this.state.from_accountId,
+          isTransfer: this.state.isTransfer,
+          amount: this.state.amount
+        })
+        this.props.autorefresh()
+
+        let responseIncoming = await axios.get('/api/transactions/incoming')
+        let responseOutgoing = await axios.get('/api/transactions/outgoing')
+        await axios.post('/api/transactions/transfer', {
+          //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
+          isConversion: false,
+          outgoingTransactionId: responseOutgoing.data.length,
+          incomingTransactionId: responseIncoming.data.length
+        })
+      }
+      else {
+        console.log("this requires conversion logic")
+      }
     }
 
-    // await axios.post('/api/transactions/incoming', this.state)
-    // await axios.post('/api/transactions/outgoing', this.state)
-    this.props.autorefresh()
   }
 
   render() {

@@ -3,7 +3,9 @@ const Account = require('../db/account')
 
 router.get("/", async (req, res, next) => {
   try {
-    let allAccounts = await Account.findAll()
+    let allAccounts = await Account.findAll({
+      where: {userId: 1}
+    })
     res.send(allAccounts)
   } catch (error) {
     console.error(error)

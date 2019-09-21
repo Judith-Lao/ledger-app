@@ -390,7 +390,8 @@ var AddAccount = function (_Component) {
 
     _this.state = {
       type: '',
-      amount: 0
+      amount: 0,
+      invalid: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
@@ -406,23 +407,34 @@ var AddAccount = function (_Component) {
     key: 'handleSubmit',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+        var _this2 = this;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 event.preventDefault();
-                _context.next = 3;
+
+                if (!["USD", "EUR", "BRL", "INR"].includes(this.state.type)) {
+                  _context.next = 7;
+                  break;
+                }
+
+                _context.next = 4;
                 return _axios2.default.post('/api/accounts', this.state);
 
-              case 3:
+              case 4:
                 this.props.autorefresh();
-                this.setState({
-                  type: '',
-                  amount: ''
-                });
-                //fix this so that this clears the field upon submit
+                _context.next = 9;
+                break;
 
-              case 5:
+              case 7:
+                this.setState({ invalid: true });
+                setTimeout(function () {
+                  _this2.setState({ invalid: false });
+                }, 3000);
+
+              case 9:
               case 'end':
                 return _context.stop();
             }
@@ -445,6 +457,11 @@ var AddAccount = function (_Component) {
         _react2.default.createElement(
           'form',
           null,
+          this.state.invalid ? _react2.default.createElement(
+            'div',
+            null,
+            'Sorry, you can only open an account with USD, EUR, BRL, or INR.'
+          ) : null,
           _react2.default.createElement(
             'label',
             { htmlFor: 'type' },
@@ -520,8 +537,9 @@ var DepositMoney = function (_Component) {
 
     _this.state = {
       accountId: 0,
-      isConversion: false,
-      amount: 0
+      isTransfer: false,
+      amount: 0,
+      invalid: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
@@ -537,19 +555,34 @@ var DepositMoney = function (_Component) {
     key: 'handleSubmit',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
+        var _this2 = this;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 event.preventDefault();
-                console.log(this.state);
-                _context.next = 4;
+
+                if (!(this.state.accountId > this.props.accounts.length)) {
+                  _context.next = 6;
+                  break;
+                }
+
+                this.setState({ invalid: true });
+                setTimeout(function () {
+                  _this2.setState({ invalid: false });
+                }, 3000);
+                _context.next = 9;
+                break;
+
+              case 6:
+                _context.next = 8;
                 return _axios2.default.post('/api/transactions/incoming', this.state);
 
-              case 4:
+              case 8:
                 this.props.autorefresh();
 
-              case 5:
+              case 9:
               case 'end':
                 return _context.stop();
             }
@@ -572,6 +605,11 @@ var DepositMoney = function (_Component) {
         _react2.default.createElement(
           'form',
           null,
+          this.state.invalid ? _react2.default.createElement(
+            'div',
+            null,
+            'This account does not exist. '
+          ) : null,
           _react2.default.createElement(
             'label',
             { htmlFor: 'type' },
@@ -648,8 +686,11 @@ var SingleAccount = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        account.type,
-        account.amount
+        'Account Number: ',
+        account.id,
+        _react2.default.createElement('br', null),
+        account.amount,
+        account.type
       );
     }
   }]);
@@ -724,7 +765,7 @@ var Accounts = function (_Component) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _axios2.default.get('/api/transactions');
+                return _axios2.default.get('/api/transactions/incoming');
 
               case 2:
                 _ref2 = _context.sent;
@@ -819,7 +860,7 @@ var Transfer = function (_Component) {
 
     _this.state = {
       from_accountId: 0,
-      conversion: '',
+      isTransfer: '',
       amount: 0,
       to_accountId: 0,
       overdraft: ''
@@ -838,10 +879,11 @@ var Transfer = function (_Component) {
   }, {
     key: 'transferOrConversion',
     value: function transferOrConversion(accounts) {
-      if (accounts[this.state.from_accountId - 1].type == accounts[this.state.to_accountId - 1].type) {
-        this.setState({ conversion: false });
+      //currently relies on all accounts belonging to one person, because this checks the type of the accounts based on their position in the array, but this will not work if [{id:0}, {id:4}]
+      if (accounts[this.state.from_accountId - 1].type === accounts[this.state.to_accountId - 1].type) {
+        this.setState({ isTransfer: true });
       } else {
-        this.setState({ conversion: true });
+        this.setState({ isTransfer: false });
       }
     }
   }, {
@@ -850,7 +892,7 @@ var Transfer = function (_Component) {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
         var _this2 = this;
 
-        var accounts;
+        var accounts, responseIncoming, responseOutgoing;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -858,22 +900,74 @@ var Transfer = function (_Component) {
                 accounts = this.props.accounts;
 
                 event.preventDefault();
-
-                if (this.state.amount > accounts[this.state.from_accountId - 1].amount) {
-                  //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
-                  this.setState({ overdraft: true });
-                  setTimeout(function () {
-                    _this2.setState({ overdraft: false });
-                  }, 3000);
-                } else {
-                  this.transferOrConversion(accounts);
-                }
-
-                // await axios.post('/api/transactions/incoming', this.state)
-                // await axios.post('/api/transactions/outgoing', this.state)
-                this.props.autorefresh();
+                _context.next = 4;
+                return this.transferOrConversion(accounts);
 
               case 4:
+                if (!(this.state.amount > accounts[this.state.from_accountId - 1].amount)) {
+                  _context.next = 9;
+                  break;
+                }
+
+                //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+                this.setState({ overdraft: true });
+                setTimeout(function () {
+                  _this2.setState({ overdraft: false });
+                }, 3000);
+                _context.next = 26;
+                break;
+
+              case 9:
+                if (!this.state.isTransfer) {
+                  _context.next = 25;
+                  break;
+                }
+
+                _context.next = 12;
+                return _axios2.default.post('/api/transactions/incoming', {
+                  accountId: this.state.to_accountId,
+                  isTransfer: this.state.isTransfer,
+                  //is there a disadvantage to hardcoding this to be true?
+                  amount: this.state.amount
+                });
+
+              case 12:
+                _context.next = 14;
+                return _axios2.default.post('/api/transactions/outgoing', {
+                  accountId: this.state.from_accountId,
+                  isTransfer: this.state.isTransfer,
+                  amount: this.state.amount
+                });
+
+              case 14:
+                this.props.autorefresh();
+
+                _context.next = 17;
+                return _axios2.default.get('/api/transactions/incoming');
+
+              case 17:
+                responseIncoming = _context.sent;
+                _context.next = 20;
+                return _axios2.default.get('/api/transactions/outgoing');
+
+              case 20:
+                responseOutgoing = _context.sent;
+                _context.next = 23;
+                return _axios2.default.post('/api/transactions/transfer', {
+                  //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
+                  isConversion: false,
+                  outgoingTransactionId: responseOutgoing.data.length,
+                  incomingTransactionId: responseIncoming.data.length
+                });
+
+              case 23:
+                _context.next = 26;
+                break;
+
+              case 25:
+                console.log("this requires conversion logic");
+
+              case 26:
               case 'end':
                 return _context.stop();
             }

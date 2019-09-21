@@ -7,7 +7,7 @@ const IncomingTransaction = db.define('incoming transaction', {
   incomingAmount: {
     type: Sequelize.INTEGER,
   },
-  isConversion: {
+  isTransfer: {
     type: Sequelize.BOOLEAN
   }
 });
