@@ -4,7 +4,6 @@ const { db, Account, IncomingTransaction, OutgoingTransaction, conversion, User 
 
 async function seed() {
   await db.sync({ force: true });
-  console.log("db synced!");
 
   const users = await Promise.all([
     User.create({
@@ -12,21 +11,23 @@ async function seed() {
       password: "123"
     })
   ]);
-  console.log(`seeded ${users.length} users`);
 
   const Accounts = await Promise.all([
     Account.create({
       type: "USD",
-      amount: 20,
+      amount: 2000,
       userId: 1
     }),
     Account.create({
       type: "EUR",
-      amount: 0,
+      amount: 100,
+      userId: 1
+    }),
+    Account.create({
+      type: "USD",
       userId: 1
     })
   ])
-  console.log(`seeded ${Accounts.length} accounts`);
 
   const Transactions = await Promise.all([
     IncomingTransaction.create({
@@ -44,14 +45,8 @@ async function seed() {
       isTransfer: true,
       accountId: 1
     })
-    // conversion.create({
-    //   incomingTransactionId: 2,
-    //   outgoingTransactionId: 1
-    // })
   ]);
-  console.log(`seeded ${Transactions.length} transactions`);
-
-  console.log(`seeded everything successfully`);
+  // console.log(`seeded everything successfully`);
 }
 
 // separate the `seed` function from the `runSeed` function.
@@ -75,5 +70,4 @@ if (module === require.main) {
   runSeed();
 }
 
-//for ./seed.spec.js later
 module.exports = seed;
