@@ -70,7 +70,7 @@ export default class Transfer extends Component {
         })
       }
       else {
-        console.log("this requires conversion logic")
+
       }
     }
 

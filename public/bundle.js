@@ -914,7 +914,7 @@ var Transfer = function (_Component) {
                 setTimeout(function () {
                   _this2.setState({ overdraft: false });
                 }, 3000);
-                _context.next = 26;
+                _context.next = 25;
                 break;
 
               case 9:
@@ -961,13 +961,10 @@ var Transfer = function (_Component) {
                 });
 
               case 23:
-                _context.next = 26;
+                _context.next = 25;
                 break;
 
               case 25:
-                console.log("this requires conversion logic");
-
-              case 26:
               case 'end':
                 return _context.stop();
             }
