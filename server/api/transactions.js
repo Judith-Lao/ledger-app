@@ -4,6 +4,8 @@ const IncomingTransaction = require('../db/incomingTransaction')
 const OutgoingTransaction = require('../db/outgoingTransaction')
 const Transfer = require('../db/transfer')
 
+//these API routes are all mounted on api/transactions
+
 router.get("/incoming", async (req, res, next) => {
   try {
     let allIncoming = await IncomingTransaction.findAll({

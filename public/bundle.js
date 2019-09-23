@@ -740,42 +740,64 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Accounts = function (_Component) {
-  _inherits(Accounts, _Component);
+var Transactions = function (_Component) {
+  _inherits(Transactions, _Component);
 
-  function Accounts(props) {
-    _classCallCheck(this, Accounts);
+  function Transactions(props) {
+    _classCallCheck(this, Transactions);
 
-    var _this = _possibleConstructorReturn(this, (Accounts.__proto__ || Object.getPrototypeOf(Accounts)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Transactions.__proto__ || Object.getPrototypeOf(Transactions)).call(this, props));
 
     _this.state = {
-      transactions: []
+      accounts: [],
+      deposit: [],
+      // withdrawal: [],
+      transferWithConversion: [],
+      transferWithoutConversion: []
     };
     return _this;
   }
 
-  _createClass(Accounts, [{
+  _createClass(Transactions, [{
     key: 'componentDidMount',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var _ref2, data;
+        var _ref2, data, allIncoming, deposit;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return _axios2.default.get('/api/transactions/incoming');
+                return _axios2.default.get('/api/accounts');
 
               case 2:
                 _ref2 = _context.sent;
                 data = _ref2.data;
 
+                data.sort(function (a, b) {
+                  return a.id - b.id;
+                });
                 this.setState({
-                  transactions: data
+                  accounts: data
+                });
+                //mounts all deposits and withdrawals from database
+                _context.next = 8;
+                return _axios2.default.get('/api/transactions/incoming');
+
+              case 8:
+                allIncoming = _context.sent;
+                deposit = allIncoming.data.filter(function (transaction) {
+                  return !transaction.isTransfer;
+                });
+                // const allOutgoing = await axios.get('/api/transactions/outgoing')
+                // let withdrawal = allOutgoing.data.filter(transaction => !transaction.isTransfer)
+
+                this.setState({
+                  deposit: deposit
                 });
 
-              case 5:
+              case 11:
               case 'end':
                 return _context.stop();
             }
@@ -795,22 +817,36 @@ var Accounts = function (_Component) {
       return _react2.default.createElement(
         'div',
         null,
-        this.state.transactions ? this.state.transactions.map(function (transaction) {
-          return _react2.default.createElement(
-            'div',
-            { key: transaction.id },
-            transaction.incomingAmount,
-            transaction.outgoingAmount
-          );
-        }) : null
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state.accounts ? this.state.accounts.map(function (account) {
+            return _react2.default.createElement(_SingleAccount2.default, { key: account.id, account: account });
+          }) : null
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state ? this.state.deposit.map(function (transaction) {
+            return _react2.default.createElement(
+              'div',
+              { key: transaction.id },
+              transaction.incomingAmount,
+              ' was deposited to account ID ',
+              transaction.accountId,
+              ' on ',
+              transaction.createdAt.slice(0, 10)
+            );
+          }) : null
+        )
       );
     }
   }]);
 
-  return Accounts;
+  return Transactions;
 }(_react.Component);
 
-exports.default = Accounts;
+exports.default = Transactions;
 
 /***/ }),
 
