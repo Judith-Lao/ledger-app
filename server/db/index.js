@@ -4,6 +4,7 @@ const Account = require('./account')
 const IncomingTransaction = require('./incomingTransaction')
 const OutgoingTransaction = require('./outgoingTransaction')
 const Transfer = require('./transfer')
+const Conversionrate = require('./conversionrate')
 
 User.hasMany(Account)
 Account.belongsTo(User)
@@ -22,5 +23,6 @@ module.exports = {
   Account,
   IncomingTransaction,
   OutgoingTransaction,
-  Transfer
+  Transfer,
+  Conversionrate
 }
