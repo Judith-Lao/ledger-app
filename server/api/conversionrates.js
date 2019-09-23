@@ -1,14 +1,15 @@
 const router = require('express').Router()
-const ConversionRate = require('../db/conversionrates')
+const Conversionrate = require('../db/conversionrate')
 
 router.get("/", async (req, res, next) => {
   try {
-    let conversionrates = await ConversionRate.findAll()
-      // where: {
-      //   fromCurrencyType: "USD"//req.params.fromCurrencyType,
-      //   // toCurrencyType: req.params.toCurrencyType
-      // }
-    // })
+    let conversionrates = await Conversionrate.findOne({
+      where: {
+        fromCurrencyType: req.query.fromCurrencyType,
+        toCurrencyType: req.query.toCurrencyType
+      }
+    })
+
     res.send(conversionrates)
   } catch (error) {
     console.error(error)

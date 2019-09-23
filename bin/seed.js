@@ -1,9 +1,9 @@
 "use strict";
 
-const { db, Account, IncomingTransaction, OutgoingTransaction, conversion, User } = require("../server/db");
+const { db, Account, IncomingTransaction, OutgoingTransaction, User, Conversionrate } = require("../server/db");
 
 async function seed() {
-  await db.sync({ force: true });
+  await db.sync({ force: true })
 
   const users = await Promise.all([
     User.create({
@@ -45,7 +45,70 @@ async function seed() {
       isTransfer: true,
       accountId: 1
     })
-  ]);
+  ])
+
+  const rates = await Promise.all([
+    Conversionrate.create({
+      fromCurrencyType: "USD",
+      toCurrencyType: "EUR",
+      rate: "0.91"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "EUR",
+      toCurrencyType: "USD",
+      rate: "1.10"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "USD",
+      toCurrencyType: "BRL",
+      rate: "4.15"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "BRL",
+      toCurrencyType: "USD",
+      rate: "0.24"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "USD",
+      toCurrencyType: "INR",
+      rate: "71.20"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "INR",
+      toCurrencyType: "USD",
+      rate: "0.014"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "EUR",
+      toCurrencyType: "BRL",
+      rate: "4.57"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "BRL",
+      toCurrencyType: "EUR",
+      rate: "0.22"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "EUR",
+      toCurrencyType: "INR",
+      rate: "78.43"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "INR",
+      toCurrencyType: "EUR",
+      rate: "0.013"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "BRL",
+      toCurrencyType: "INR",
+      rate: "17.16"
+    }),
+    Conversionrate.create({
+      fromCurrencyType: "INR",
+      toCurrencyType: "BRL",
+      rate: "0.059"
+    })
+  ])
   // console.log(`seeded everything successfully`);
 }
 
