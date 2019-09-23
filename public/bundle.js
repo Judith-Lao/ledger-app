@@ -860,14 +860,14 @@ var Transfer = function (_Component) {
 
     _this.state = {
       from_accountId: 0,
-      isTransfer: '',
+      isConversion: '',
       amount: 0,
       to_accountId: 0,
       overdraft: ''
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
-    _this.transferOrConversion = _this.transferOrConversion.bind(_this);
+    _this.isConversion = _this.transferOrConversion.bind(_this);
     return _this;
   }
 
@@ -881,9 +881,9 @@ var Transfer = function (_Component) {
     value: function transferOrConversion(accounts) {
       //currently relies on all accounts belonging to one person, because this checks the type of the accounts based on their position in the array, but this will not work if [{id:0}, {id:4}]
       if (accounts[this.state.from_accountId - 1].type === accounts[this.state.to_accountId - 1].type) {
-        this.setState({ isTransfer: true });
+        this.setState({ isConversion: false });
       } else {
-        this.setState({ isTransfer: false });
+        this.setState({ isConversion: true });
       }
     }
   }, {
@@ -892,7 +892,8 @@ var Transfer = function (_Component) {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
         var _this2 = this;
 
-        var accounts, responseIncoming, responseOutgoing;
+        var accounts, responseIncoming, responseOutgoing, fromAccount, toAccount, conversionrate, _responseIncoming, _responseOutgoing;
+
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -901,7 +902,7 @@ var Transfer = function (_Component) {
 
                 event.preventDefault();
                 _context.next = 4;
-                return this.transferOrConversion(accounts);
+                return this.isConversion(accounts);
 
               case 4:
                 if (!(this.state.amount > accounts[this.state.from_accountId - 1].amount)) {
@@ -914,11 +915,11 @@ var Transfer = function (_Component) {
                 setTimeout(function () {
                   _this2.setState({ overdraft: false });
                 }, 3000);
-                _context.next = 25;
+                _context.next = 47;
                 break;
 
               case 9:
-                if (!this.state.isTransfer) {
+                if (this.state.isConversion) {
                   _context.next = 25;
                   break;
                 }
@@ -926,8 +927,7 @@ var Transfer = function (_Component) {
                 _context.next = 12;
                 return _axios2.default.post('/api/transactions/incoming', {
                   accountId: this.state.to_accountId,
-                  isTransfer: this.state.isTransfer,
-                  //is there a disadvantage to hardcoding this to be true?
+                  isTransfer: true,
                   amount: this.state.amount
                 });
 
@@ -935,7 +935,7 @@ var Transfer = function (_Component) {
                 _context.next = 14;
                 return _axios2.default.post('/api/transactions/outgoing', {
                   accountId: this.state.from_accountId,
-                  isTransfer: this.state.isTransfer,
+                  isTransfer: true,
                   amount: this.state.amount
                 });
 
@@ -961,10 +961,68 @@ var Transfer = function (_Component) {
                 });
 
               case 23:
-                _context.next = 25;
+                _context.next = 47;
                 break;
 
               case 25:
+                _context.next = 27;
+                return _axios2.default.get('/api/accounts/' + this.state.from_accountId);
+
+              case 27:
+                fromAccount = _context.sent;
+                _context.next = 30;
+                return _axios2.default.get('/api/accounts/' + this.state.to_accountId);
+
+              case 30:
+                toAccount = _context.sent;
+                _context.next = 33;
+                return _axios2.default.get('/api/conversionrates', {
+                  params: {
+                    fromCurrencyType: fromAccount.data.type,
+                    toCurrencyType: toAccount.data.type
+                  }
+                });
+
+              case 33:
+                conversionrate = _context.sent;
+                _context.next = 36;
+                return _axios2.default.post('/api/transactions/outgoing', {
+                  accountId: this.state.from_accountId,
+                  isTransfer: true,
+                  amount: this.state.amount
+                });
+
+              case 36:
+                _context.next = 38;
+                return _axios2.default.post('/api/transactions/incoming', {
+                  accountId: this.state.to_accountId,
+                  isTransfer: true,
+                  amount: this.state.amount * conversionrate.data.rate
+                });
+
+              case 38:
+
+                this.props.autorefresh();
+
+                _context.next = 41;
+                return _axios2.default.get('/api/transactions/incoming');
+
+              case 41:
+                _responseIncoming = _context.sent;
+                _context.next = 44;
+                return _axios2.default.get('/api/transactions/outgoing');
+
+              case 44:
+                _responseOutgoing = _context.sent;
+                _context.next = 47;
+                return _axios2.default.post('/api/transactions/transfer', {
+                  //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
+                  isConversion: true,
+                  outgoingTransactionId: _responseOutgoing.data.length,
+                  incomingTransactionId: _responseIncoming.data.length
+                });
+
+              case 47:
               case 'end':
                 return _context.stop();
             }

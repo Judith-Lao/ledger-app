@@ -12,6 +12,19 @@ router.get("/", async (req, res, next) => {
   }
 })
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    let allAccounts = await Account.findOne({
+      where: {
+        id: req.params.id
+      }
+    })
+    res.send(allAccounts)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 router.post("/", async (req, res, next) => {
   try {
     let newAccount = await Account.create({
