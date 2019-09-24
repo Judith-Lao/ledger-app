@@ -8,6 +8,7 @@ const Transfer = require('../db/transfer')
 
 router.get("/incoming", async (req, res, next) => {
   try {
+    // let allIncoming = IncomingTransaction.findAll()
     let allIncoming = await IncomingTransaction.findAll({
       include: [{
         model: Account,
@@ -23,7 +24,7 @@ router.get("/incoming", async (req, res, next) => {
 router.post("/incoming", async (req, res, next) => {
   try {
     //documents that you've deposited something in transactions
-    await IncomingTransaction.create({
+    let incoming = await IncomingTransaction.create({
     accountId: req.body.accountId,
     isTransfer: req.body.isTransfer,
     incomingAmount: req.body.amount
@@ -32,7 +33,7 @@ router.post("/incoming", async (req, res, next) => {
     let account = await Account.findById(req.body.accountId)
     let currentBalance = account.amount
     await account.update({amount: Number(currentBalance)+Number(req.body.amount)})
-    res.sendStatus(200)
+    res.status(201).send(incoming)
   } catch (error) {
     console.error(error)
   }
@@ -64,7 +65,7 @@ router.post("/outgoing", async (req, res, next) => {
     let account = await Account.findById(req.body.accountId)
     let currentBalance = account.amount
     await account.update({amount: Number(currentBalance)-Number(req.body.amount)})
-    res.sendStatus(200)
+    res.status(201).send(account)
   } catch (error) {
     console.error(error)
   }

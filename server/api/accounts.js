@@ -14,12 +14,12 @@ router.get("/", async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    let allAccounts = await Account.findOne({
+    let singleAccount = await Account.findOne({
       where: {
         id: req.params.id
       }
     })
-    res.send(allAccounts)
+    res.send(singleAccount)
   } catch (error) {
     console.error(error)
   }

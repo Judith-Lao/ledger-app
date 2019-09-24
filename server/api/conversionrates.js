@@ -3,14 +3,14 @@ const Conversionrate = require('../db/conversionrate')
 
 router.get("/", async (req, res, next) => {
   try {
-    let conversionrates = await Conversionrate.findOne({
+    let conversionrate = await Conversionrate.findOne({
       where: {
         fromCurrencyType: req.query.fromCurrencyType,
         toCurrencyType: req.query.toCurrencyType
       }
     })
 
-    res.send(conversionrates)
+    res.send(conversionrate)
   } catch (error) {
     console.error(error)
   }
