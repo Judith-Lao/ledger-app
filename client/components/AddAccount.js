@@ -33,11 +33,6 @@ export default class AddAccount extends Component {
         this.setState({invalid: false})}, 3000
       )
     }
-    // this.setState({
-    //   type: '',
-    //   amount: ''
-    // })
-    //fix this so that this clears the field upon submit
   }
 
   render() {
