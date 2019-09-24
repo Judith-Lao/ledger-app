@@ -26,10 +26,6 @@ All data presented to the user should be saved in a database. There should be un
 
 
 Written Portion
-Here’s a chance for you to showcase your thought one or a few of the important or
-challenging decisions you made while developing this application. Feel free to pick one or
-two decisions and write longer explanations so we can have a good understanding of your
-critical thinking and writing skills.
 
 One decision that I am proud of is the decision to represent an electronic money transfer (whether it requires a currency conversion or not) as two transactions: a combination of an incoming transaction and an outgoing transaction in a join table. When a user sends money from one account to another account, a post request is made from the front end (components/Transfer.js) to the incomingTransactions table, the outgoingTransactions table, and the transfers table (the join table). These post requests on the backend (api/transactions.js) update the account balances accordingly.
 
