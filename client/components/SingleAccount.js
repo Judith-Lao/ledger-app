@@ -10,11 +10,13 @@ export default class SingleAccount extends Component {
   render() {
     const account = this.props.account
     return (
+      <div class="accountcontainer">
       <div class="account">
         Account Number: {account.id}
         <br></br>
         {account.amount}
         {account.type}
+      </div>
       </div>
     )
   }
