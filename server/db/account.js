@@ -12,8 +12,8 @@ const Account = db.define('account', {
     }
   },
   amount: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0
+    type: Sequelize.STRING,
+    defaultValue: "0"
   }
 });
 
