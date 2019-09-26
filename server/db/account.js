@@ -12,7 +12,7 @@ const Account = db.define('account', {
     }
   },
   amount: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     defaultValue: 0
   }
 });

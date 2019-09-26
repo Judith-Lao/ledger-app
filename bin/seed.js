@@ -15,12 +15,12 @@ async function seed() {
   const Accounts = await Promise.all([
     Account.create({
       type: "USD",
-      amount: "2000",
+      amount: 2000,
       userId: 1
     }),
     Account.create({
       type: "EUR",
-      amount: "100",
+      amount: 100,
       userId: 1
     }),
     Account.create({
@@ -31,17 +31,17 @@ async function seed() {
 
   const Transactions = await Promise.all([
     IncomingTransaction.create({
-      incomingAmount: "5",
+      incomingAmount: 5,
       isTransfer: true,
       accountId: 2
     }),
     IncomingTransaction.create({
-      incomingAmount: "10",
+      incomingAmount: 10,
       isTransfer: false,
       accountId: 1
     }),
     OutgoingTransaction.create({
-      outgoingAmount: "7.20",
+      outgoingAmount: 7.20,
       isTransfer: true,
       accountId: 1
     })
