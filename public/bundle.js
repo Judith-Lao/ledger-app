@@ -453,7 +453,7 @@ var AddAccount = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        null,
+        { 'class': 'container' },
         _react2.default.createElement(
           'form',
           null,
@@ -463,17 +463,33 @@ var AddAccount = function (_Component) {
             'Sorry, you can only open an account with USD, EUR, BRL, or INR.'
           ) : null,
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'type' },
-            'Type of Currency:'
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'type' },
+              'Type of Currency:'
+            )
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'type', onChange: this.handleChange }),
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'amount' },
-            'Amount:'
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'type', onChange: this.handleChange })
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'amount' },
+              'Amount:'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
+          ),
           _react2.default.createElement(
             'button',
             { type: 'button', onClick: this.handleSubmit },
@@ -680,15 +696,15 @@ var SingleAccount = function (_Component) {
   }
 
   _createClass(SingleAccount, [{
-    key: 'render',
+    key: "render",
     value: function render() {
       var account = this.props.account;
       return _react2.default.createElement(
-        'div',
-        null,
-        'Account Number: ',
+        "div",
+        { "class": "account" },
+        "Account Number: ",
         account.id,
-        _react2.default.createElement('br', null),
+        _react2.default.createElement("br", null),
         account.amount,
         account.type
       );
