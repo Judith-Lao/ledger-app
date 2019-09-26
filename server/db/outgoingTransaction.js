@@ -5,7 +5,7 @@ const db = require('./database');
 
 const OutgoingTransaction = db.define('outgoing transaction', {
   outgoingAmount: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
   },
   isTransfer: {
     type: Sequelize.BOOLEAN

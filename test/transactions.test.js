@@ -19,9 +19,9 @@ describe("Transactions", () => {
         .expect(200)
         .then((res) => {
           expect(res.body).to.be.an('array')
-          expect(res.body.some(transaction => transaction.incomingAmount === 10)).to.equal(true)
+          expect(res.body.some(transaction => transaction.incomingAmount === "10")).to.equal(true)
           expect(res.body).to.have.length(2)
-          expect(res.body[0].incomingAmount).to.equal(5)
+          expect(res.body[0].incomingAmount).to.equal("5")
         })
     })
     it("populates the account information for the incoming transaction (eager loading)", () => {
@@ -41,7 +41,7 @@ describe("Transactions", () => {
         .expect(200)
         .then((res) => {
           expect(res.body[0].type).to.equal("EUR")
-          expect(res.body[0].amount).to.equal(1000)
+          expect(res.body[0].amount).to.equal("1000")
         })
     })
     xit("documents the incoming transaction in the transactions table", async() => {
@@ -50,18 +50,18 @@ describe("Transactions", () => {
         .send({
           accountId: 1,
           isTransfer: true,
-          amount: 1000
+          amount: "1000"
         })
         .expect(201)
       const createdTransaction = await IncomingTransaction.findById(response.body.id)
-      expect(createdTransaction.incomingAmount).to.equal(1000);
+      expect(createdTransaction.incomingAmount).to.equal("1000");
 
       const account2balance = await agent
         .get('/api/accounts')
         .expect(200)
         .then((res) => {
           expect(res.body[0].type).to.equal("EUR")
-          expect(res.body[0].amount).to.equal(2000)
+          expect(res.body[0].amount).to.equal("2000")
         })
     })
   })
