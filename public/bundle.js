@@ -453,7 +453,7 @@ var AddAccount = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { 'class': 'container' },
+        null,
         _react2.default.createElement(
           'form',
           null,
@@ -627,17 +627,33 @@ var DepositMoney = function (_Component) {
             'This account does not exist. '
           ) : null,
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'type' },
-            'Account #'
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'type' },
+              'Account #'
+            )
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'accountId', onChange: this.handleChange }),
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'amount' },
-            'How much money would you like to deposit?'
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'accountId', onChange: this.handleChange })
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange }),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'amount' },
+              'How much money would you like to deposit?'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
+          ),
           _react2.default.createElement(
             'button',
             { type: 'button', onClick: this.handleSubmit },
@@ -701,12 +717,16 @@ var SingleAccount = function (_Component) {
       var account = this.props.account;
       return _react2.default.createElement(
         "div",
-        { "class": "account" },
-        "Account Number: ",
-        account.id,
-        _react2.default.createElement("br", null),
-        account.amount,
-        account.type
+        { "class": "accountcontainer" },
+        _react2.default.createElement(
+          "div",
+          { "class": "account" },
+          "Account Number: ",
+          account.id,
+          _react2.default.createElement("br", null),
+          account.amount,
+          account.type
+        )
       );
     }
   }]);

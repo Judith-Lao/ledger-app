@@ -39,12 +39,20 @@ export default class DepositMoney extends Component {
     <div>
       <form>
       {this.state.invalid ? <div>This account does not exist. </div>: null}
+
+      <div class="col-25">
         <label htmlFor="type">Account #</label>
+      </div>
+      <div class="col-75">
         <input type ="text" name="accountId" onChange={this.handleChange}/>
+      </div>
 
+      <div class="col-25">
         <label htmlFor="amount">How much money would you like to deposit?</label>
+      </div>
+      <div class="col-75">
         <input type ="text" name="amount" onChange={this.handleChange}/>
-
+      </div>
         <button type="button" onClick={this.handleSubmit}>
         Deposit
         </button>
