@@ -14,45 +14,38 @@ async function seed() {
 
   const Accounts = await Promise.all([
     Account.create({
-      id: 1, //if you don't specify id, these are not consistent when running transactions test
       type: "USD",
       amount: "2000",
       userId: 1
     }),
     Account.create({
-      id: 2,
       type: "EUR",
       amount: "100",
       userId: 1
     }),
     Account.create({
-      id: 3,
       type: "USD",
       userId: 1
     })
   ])
 
-  // const Transactions = await Promise.all([
-  //   IncomingTransaction.create({
-  //     id: 1,
-  //     incomingAmount: "5",
-  //     isTransfer: true,
-  //     accountId: 2
-  //   }),
-  //   IncomingTransaction.create({
-  //     id: 2,
-  //     incomingAmount: "10",
-  //     isTransfer: false,
-  //     accountId: 1
-  //   }),
-  //   OutgoingTransaction.create({
-  //     id: 3,
-  //     outgoingAmount: "7.20",
-  //     isTransfer: true,
-  //     accountId: 1
-  //   })
-  // ])
-  //can't post from transactions test because it's saying there is a duplicate incoming transactions primary key, but if you send ({id: 4}) it still doesn't work, so i got rid of the incoming transactions from the seed file
+  const Transactions = await Promise.all([
+    IncomingTransaction.create({
+      incomingAmount: "5",
+      isTransfer: true,
+      accountId: 2
+    }),
+    IncomingTransaction.create({
+      incomingAmount: "10",
+      isTransfer: false,
+      accountId: 1
+    }),
+    OutgoingTransaction.create({
+      outgoingAmount: "7.20",
+      isTransfer: true,
+      accountId: 1
+    })
+  ])
 
   const rates = await Promise.all([
     Conversionrate.create({

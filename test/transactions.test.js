@@ -10,8 +10,6 @@ const {db, User, Account, IncomingTransaction,
    OutgoingTransaction, Transfer} = require('../server/db')
 
 describe("Transactions", () => {
-  // beforeEach(async() => await seed())
-
   describe("post request for incoming transactions", () => {
     it("prior to deposit, account with id 1 has 2000", () => {
       return agent
@@ -38,7 +36,7 @@ describe("Transactions", () => {
     })
 
     it("documents the incoming transaction in the transactions table", async() => {
-      const createdTransaction = await IncomingTransaction.findById(1)
+      const createdTransaction = await IncomingTransaction.findById(3)
       expect(createdTransaction.incomingAmount).to.equal("1000");
     })
 
@@ -55,8 +53,8 @@ describe("Transactions", () => {
         .then((res) => {
           expect(res.body).to.be.an('array')
           expect(res.body.some(transaction => transaction.incomingAmount === "1000")).to.equal(true)
-          expect(res.body).to.have.length(1)
-          expect(res.body[0].incomingAmount).to.equal("1000")
+          expect(res.body).to.have.length(3)
+          expect(res.body[2].incomingAmount).to.equal("1000")
         })
     })
     it("populates the account information for the incoming transaction (eager loading)", () => {
