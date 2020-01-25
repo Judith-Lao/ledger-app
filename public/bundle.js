@@ -974,7 +974,7 @@ var Transfer = function (_Component) {
 
                 event.preventDefault();
                 _context.next = 4;
-                return this.isConversion(accounts);
+                return this.transferOrConversion(accounts);
 
               case 4:
                 if (!(this.state.amount > accounts[this.state.from_accountId - 1].amount)) {
