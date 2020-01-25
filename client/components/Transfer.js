@@ -35,7 +35,7 @@ export default class Transfer extends Component {
   async handleSubmit(event) {
     let accounts = this.props.accounts
     event.preventDefault()
-    await this.isConversion(accounts)
+    await this.transferOrConversion(accounts)
 
     if (this.state.amount > accounts[this.state.from_accountId -1].amount) {
       //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
