@@ -59,7 +59,7 @@ router.post("/outgoing", async (req, res, next) => {
     await Outgoing.create({
     accountId: req.body.accountId,
     isTransfer: req.body.isTransfer,
-    outgoing: req.body.amount
+    amount: req.body.amount
     })
     //reflects this withdrawal in your account balance
     let account = await Account.findById(req.body.accountId)
