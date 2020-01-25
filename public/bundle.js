@@ -788,6 +788,7 @@ var Transactions = function (_Component) {
       accounts: [],
       deposit: [],
       // withdrawal: [],
+      transfer: [],
       transferWithConversion: [],
       transferWithoutConversion: []
     };
@@ -832,8 +833,9 @@ var Transactions = function (_Component) {
                 this.setState({
                   deposit: deposit
                 });
+                this.getTransfers();
 
-              case 11:
+              case 12:
               case 'end':
                 return _context.stop();
             }
@@ -846,6 +848,40 @@ var Transactions = function (_Component) {
       }
 
       return componentDidMount;
+    }()
+  }, {
+    key: 'getTransfers',
+    value: function () {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var joinTable;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _axios2.default.get('/api/transactions/transfer');
+
+              case 2:
+                joinTable = _context2.sent;
+
+                this.setState({
+                  transfer: joinTable
+                });
+                console.log(this.state.transfer);
+
+              case 5:
+              case 'end':
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function getTransfers() {
+        return _ref3.apply(this, arguments);
+      }
+
+      return getTransfers;
     }()
   }, {
     key: 'render',

@@ -10,12 +10,13 @@ export default class Transactions extends Component {
       accounts: [],
       deposit: [],
       // withdrawal: [],
+      transfer: [],
       transferWithConversion: [],
       transferWithoutConversion: []
     }
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     //mounts the accounts from database
     const {data} = await axios.get('/api/accounts')
     data.sort(function(a,b) {return a.id - b.id})
@@ -30,6 +31,15 @@ export default class Transactions extends Component {
     this.setState({
       deposit
     })
+    this.getTransfers()
+  }
+
+  async getTransfers() {
+    const joinTable = await axios.get('/api/transactions/transfer')
+    this.setState({
+      transfer: joinTable
+    })
+    console.log(this.state.transfer)
   }
 
   render() {
