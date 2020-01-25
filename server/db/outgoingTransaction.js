@@ -3,8 +3,8 @@
 const Sequelize = require('sequelize');
 const db = require('./database');
 
-const OutgoingTransaction = db.define('outgoing transaction', {
-  outgoingAmount: {
+const Outgoing = db.define('outgoing', {
+  amount: {
     type: Sequelize.STRING,
   },
   isTransfer: {
@@ -12,4 +12,4 @@ const OutgoingTransaction = db.define('outgoing transaction', {
   }
 });
 
-module.exports = OutgoingTransaction;
+module.exports = Outgoing;

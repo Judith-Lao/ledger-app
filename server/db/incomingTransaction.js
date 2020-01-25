@@ -3,8 +3,8 @@
 const Sequelize = require('sequelize');
 const db = require('./database');
 
-const IncomingTransaction = db.define('incoming transaction', {
-  incomingAmount: {
+const Incoming = db.define('incoming', {
+  amount: {
     type: Sequelize.STRING
   },
   isTransfer: {
@@ -12,4 +12,4 @@ const IncomingTransaction = db.define('incoming transaction', {
   }
 });
 
-module.exports = IncomingTransaction;
+module.exports = Incoming;

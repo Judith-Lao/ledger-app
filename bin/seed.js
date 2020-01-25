@@ -1,6 +1,6 @@
 "use strict";
 
-const { db, Account, IncomingTransaction, OutgoingTransaction, User, Conversionrate } = require("../server/db");
+const { db, Account, Incoming, OutgoingTransaction, Transfer, User, Conversionrate } = require("../server/db");
 
 async function seed() {
   await db.sync({ force: true })
@@ -30,21 +30,27 @@ async function seed() {
   ])
 
   const Transactions = await Promise.all([
-    IncomingTransaction.create({
-      incomingAmount: "5",
-      isTransfer: true,
-      accountId: 2
-    }),
-    IncomingTransaction.create({
-      incomingAmount: "10",
-      isTransfer: false,
-      accountId: 1
-    }),
-    OutgoingTransaction.create({
-      outgoingAmount: "7.20",
-      isTransfer: true,
-      accountId: 1
-    })
+    // Incoming.create({
+    //   amount: "2000",
+    //   isTransfer: false,
+    //   accountId: 1
+    // }),
+    // Incoming.create({
+    //   amount: "100",
+    //   isTransfer: false,
+    //   accountId: 2
+    // }),
+    // Outgoing.create({
+    //   amount: "110.25",
+    //   isTransfer: true,
+    //   accountId: 3
+    // }),
+    // Can you put seed data into a join table?
+    // Transfer.create({
+    //   isConversion: true
+    //   // incomingTransactionId: 2,
+    //   // outgoingTransactionId: 1
+    // })
   ])
 
   const rates = await Promise.all([

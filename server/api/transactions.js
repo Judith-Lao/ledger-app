@@ -1,15 +1,15 @@
 const router = require('express').Router()
 const Account = require('../db/account')
-const IncomingTransaction = require('../db/incomingTransaction')
-const OutgoingTransaction = require('../db/outgoingTransaction')
+const Incoming = require('../db/incomingTransaction')
+const Outgoing = require('../db/outgoingTransaction')
 const Transfer = require('../db/transfer')
 
 //these API routes are all mounted on api/transactions
 
 router.get("/incoming", async (req, res, next) => {
   try {
-    // let allIncoming = IncomingTransaction.findAll()
-    let allIncoming = await IncomingTransaction.findAll({
+    // let allIncoming = Incoming.findAll()
+    let allIncoming = await Incoming.findAll({
       include: [{
         model: Account,
         where: {userId: 1}
@@ -24,10 +24,10 @@ router.get("/incoming", async (req, res, next) => {
 router.post("/incoming", async (req, res, next) => {
   try {
     //documents that you've deposited something in transactions
-    let incoming = await IncomingTransaction.create({
+    let incoming = await Incoming.create({
     accountId: req.body.accountId,
     isTransfer: req.body.isTransfer,
-    incomingAmount: req.body.amount
+    amount: req.body.amount
     })
     //reflects this deposit in your account balance
     let account = await Account.findById(req.body.accountId)
@@ -41,7 +41,7 @@ router.post("/incoming", async (req, res, next) => {
 
 router.get("/outgoing", async (req, res, next) => {
   try {
-    let allOutgoing = await OutgoingTransaction.findAll({
+    let allOutgoing = await Outgoing.findAll({
       include: [{
         model: Account,
         where: {userId: 1}
@@ -56,10 +56,10 @@ router.get("/outgoing", async (req, res, next) => {
 router.post("/outgoing", async (req, res, next) => {
   try {
     //documents that you've withdrawn something in transactions
-    await OutgoingTransaction.create({
+    await Outgoing.create({
     accountId: req.body.accountId,
     isTransfer: req.body.isTransfer,
-    outgoingAmount: req.body.amount
+    outgoing: req.body.amount
     })
     //reflects this withdrawal in your account balance
     let account = await Account.findById(req.body.accountId)
@@ -71,12 +71,25 @@ router.post("/outgoing", async (req, res, next) => {
   }
 })
 
+
+//not done
+const JoinTable = "SELECT incomingTransactionId, incoming.amount as incoming_amt,incoming.currency as incoming_cur,outgoing_id,outgoing.amount as outgoing_amt,outgoing.currency as outgoing_cur FROM incoming_outgoing JOIN incoming ON incoming.id=incoming_outgoing.incoming_id JOIN outgoing ON incoming_outgoing.outgoing_id = outgoing.id"
+
+router.get("/transfer", async (req, res, next) => {
+  try {
+    let [results, meta] = sequelize.query(JoinTable)
+    res.send(results)
+  } catch (error) {
+    console.error(error)
+  }
+})
+
 router.post("/transfer", async (req, res, next) => {
   try {
     await Transfer.create({
       isConversion: req.body.isConversion,
-      outgoingTransactionId: req.body.outgoingTransactionId,
-      incomingTransactionId: req.body.incomingTransactionId
+      outgoingId: req.body.outgoingTransactionId,
+      incomingId: req.body.incomingTransactionId
     })
   } catch (error) {
     console.error(error)
