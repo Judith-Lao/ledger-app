@@ -3,6 +3,7 @@ const Account = require('../db/account')
 const Incoming = require('../db/incomingTransaction')
 const Outgoing = require('../db/outgoingTransaction')
 const Transfer = require('../db/transfer')
+const Sequelize = require('sequelize');
 
 //these API routes are all mounted on api/transactions
 
@@ -71,14 +72,14 @@ router.post("/outgoing", async (req, res, next) => {
   }
 })
 
-
-//not done
-const JoinTable = "SELECT incomingTransactionId, incoming.amount as incoming_amt,incoming.currency as incoming_cur,outgoing_id,outgoing.amount as outgoing_amt,outgoing.currency as outgoing_cur FROM incoming_outgoing JOIN incoming ON incoming.id=incoming_outgoing.incoming_id JOIN outgoing ON incoming_outgoing.outgoing_id = outgoing.id"
-
 router.get("/transfer", async (req, res, next) => {
   try {
-    let [results, meta] = sequelize.query(JoinTable)
-    res.send(results)
+    let allTransfers = await Transfer.findAll({
+      include: [
+        {model: Outgoing},
+        {model: Incoming}
+      ]})
+    res.send(allTransfers)
   } catch (error) {
     console.error(error)
   }
