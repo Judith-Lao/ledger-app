@@ -310,28 +310,32 @@ var Accounts = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        null,
+        { 'class': 'container' },
         _react2.default.createElement(
           'div',
-          null,
+          { 'class': 'accountcontainer' },
           this.state.accounts ? this.state.accounts.map(function (account) {
             return _react2.default.createElement(_SingleAccount2.default, { key: account.id, account: account });
           }) : null
         ),
         _react2.default.createElement(
           'div',
-          null,
-          _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates })
-        ),
-        _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
-        ),
-        _react2.default.createElement(
-          'div',
-          null,
-          _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
+          { 'class': 'form_container' },
+          _react2.default.createElement(
+            'div',
+            { 'class': 'form_wrapper' },
+            _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates })
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'form_wrapper' },
+            _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'form_wrapper' },
+            _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
+          )
         )
       );
     }
@@ -717,7 +721,7 @@ var SingleAccount = function (_Component) {
       var account = this.props.account;
       return _react2.default.createElement(
         "div",
-        { "class": "accountcontainer" },
+        null,
         _react2.default.createElement(
           "div",
           { "class": "account" },
@@ -1208,21 +1212,41 @@ var Transfer = function (_Component) {
             'Sorry, you do not have enough money in this account to transfer.'
           ) : null,
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'type' },
-            'Transfer from Account #:'
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'type' },
+              'Transfer from Account #:'
+            )
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'from_accountId', onChange: this.handleChange }),
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'amount' },
-            'How much money would you like to transfer out of this account?'
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'from_accountId', onChange: this.handleChange })
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange }),
           _react2.default.createElement(
-            'label',
-            { htmlFor: 'amount' },
-            'Into Account #:'
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'amount' },
+              'How much money would you like to transfer out of this account?'
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-75' },
+            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
+          ),
+          _react2.default.createElement(
+            'div',
+            { 'class': 'col-25' },
+            _react2.default.createElement(
+              'label',
+              { htmlFor: 'amount' },
+              'Into Account #:'
+            )
           ),
           _react2.default.createElement('input', { type: 'text', name: 'to_accountId', onChange: this.handleChange }),
           _react2.default.createElement(
