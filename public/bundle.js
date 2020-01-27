@@ -147,7 +147,7 @@ var Main = function Main() {
         _react2.default.createElement(
           'h1',
           null,
-          'Welcome to TransferWise'
+          'Welcome to Ledger App'
         ),
         _react2.default.createElement(
           'div',
@@ -787,8 +787,7 @@ var Transactions = function (_Component) {
     _this.state = {
       accounts: [],
       deposit: [],
-      // withdrawal: [],
-      transfer: [],
+      allTransfers: [],
       transferWithConversion: [],
       transferWithoutConversion: []
     };
@@ -799,7 +798,7 @@ var Transactions = function (_Component) {
     key: 'componentDidMount',
     value: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var _ref2, data, allIncoming, deposit;
+        var _ref2, data;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -818,24 +817,10 @@ var Transactions = function (_Component) {
                 this.setState({
                   accounts: data
                 });
-                //mounts all deposits and withdrawals from database
-                _context.next = 8;
-                return _axios2.default.get('/api/transactions/incoming');
-
-              case 8:
-                allIncoming = _context.sent;
-                deposit = allIncoming.data.filter(function (transaction) {
-                  return !transaction.isTransfer;
-                });
-                // const allOutgoing = await axios.get('/api/transactions/outgoing')
-                // let withdrawal = allOutgoing.data.filter(transaction => !transaction.isTransfer)
-
-                this.setState({
-                  deposit: deposit
-                });
+                this.getDeposits();
                 this.getTransfers();
 
-              case 12:
+              case 8:
               case 'end':
                 return _context.stop();
             }
@@ -850,24 +835,26 @@ var Transactions = function (_Component) {
       return componentDidMount;
     }()
   }, {
-    key: 'getTransfers',
+    key: 'getDeposits',
     value: function () {
       var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var joinTable;
+        var allIncoming, deposit;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return _axios2.default.get('/api/transactions/transfer');
+                return _axios2.default.get('/api/transactions/incoming');
 
               case 2:
-                joinTable = _context2.sent;
+                allIncoming = _context2.sent;
+                deposit = allIncoming.data.filter(function (transaction) {
+                  return !transaction.isTransfer;
+                });
 
                 this.setState({
-                  transfer: joinTable
+                  deposit: deposit
                 });
-                console.log(this.state.transfer);
 
               case 5:
               case 'end':
@@ -877,8 +864,51 @@ var Transactions = function (_Component) {
         }, _callee2, this);
       }));
 
-      function getTransfers() {
+      function getDeposits() {
         return _ref3.apply(this, arguments);
+      }
+
+      return getDeposits;
+    }()
+  }, {
+    key: 'getTransfers',
+    value: function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        var _ref5, data, transferWithoutConversion, transferWithConversion;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return _axios2.default.get('/api/transactions/transfer');
+
+              case 2:
+                _ref5 = _context3.sent;
+                data = _ref5.data;
+                transferWithoutConversion = data.filter(function (data) {
+                  return !data.isConversion;
+                });
+                transferWithConversion = data.filter(function (data) {
+                  return data.isConversion;
+                });
+
+                this.setState({
+                  allTransfers: data,
+                  transferWithConversion: transferWithConversion,
+                  transferWithoutConversion: transferWithoutConversion
+                });
+
+              case 7:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getTransfers() {
+        return _ref4.apply(this, arguments);
       }
 
       return getTransfers;
@@ -899,15 +929,34 @@ var Transactions = function (_Component) {
         _react2.default.createElement(
           'div',
           null,
-          this.state ? this.state.deposit.map(function (transaction) {
+          this.state.deposit ? this.state.deposit.map(function (deposit) {
             return _react2.default.createElement(
               'div',
-              { key: transaction.id },
-              transaction.incomingAmount,
+              { key: deposit.id },
+              deposit.amount,
               ' was deposited to account ID ',
-              transaction.accountId,
+              deposit.accountId,
               ' on ',
-              transaction.createdAt.slice(0, 10)
+              deposit.createdAt.slice(0, 10)
+            );
+          }) : null
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
+          this.state.allTransfers ? this.state.allTransfers.map(function (transfer) {
+            return _react2.default.createElement(
+              'div',
+              { key: transfer.id },
+              transfer.outgoing.amount,
+              ' was taken out of account ID ',
+              transfer.outgoing.accountId,
+              ' and ',
+              transfer.incoming.amount,
+              ' was deposited into account ID ',
+              transfer.incoming.accountId,
+              ' on ',
+              transfer.createdAt.slice(0, 10)
             );
           }) : null
         )

@@ -9,8 +9,7 @@ export default class Transactions extends Component {
     this.state = {
       accounts: [],
       deposit: [],
-      // withdrawal: [],
-      transfer: [],
+      allTransfers: [],
       transferWithConversion: [],
       transferWithoutConversion: []
     }
@@ -23,38 +22,53 @@ export default class Transactions extends Component {
     this.setState({
       accounts: data
     })
-    //mounts all deposits and withdrawals from database
-    const allIncoming = await axios.get('/api/transactions/incoming')
-    let deposit = allIncoming.data.filter(transaction => !transaction.isTransfer)
-    // const allOutgoing = await axios.get('/api/transactions/outgoing')
-    // let withdrawal = allOutgoing.data.filter(transaction => !transaction.isTransfer)
-    this.setState({
-      deposit
-    })
+    this.getDeposits()
     this.getTransfers()
   }
 
-  async getTransfers() {
-    const joinTable = await axios.get('/api/transactions/transfer')
+  async getDeposits() {
+    const allIncoming = await axios.get('/api/transactions/incoming')
+    let deposit = allIncoming.data.filter(transaction => !transaction.isTransfer)
     this.setState({
-      transfer: joinTable
+      deposit
     })
-    console.log(this.state.transfer)
+  }
+
+  async getTransfers() {
+    const {data} = await axios.get('/api/transactions/transfer')
+    let transferWithoutConversion = data.filter(data => !data.isConversion)
+    let transferWithConversion = data.filter(data => data.isConversion)
+    this.setState({
+      allTransfers: data,
+      transferWithConversion,
+      transferWithoutConversion
+    })
   }
 
   render() {
     return (
       <div>
+
         <div>
             {this.state.accounts ? this.state.accounts.map(account => <SingleAccount key={account.id} account={account}/> ) : null}
-          </div>
+        </div>
+
         <div>
-          {this.state ? this.state.deposit.map(transaction =>
-          <div key={transaction.id}>
-            {transaction.incomingAmount} was deposited to account ID {transaction.accountId} on {transaction.createdAt.slice(0,10)}
+          {this.state.deposit ? this.state.deposit.map(deposit =>
+          <div key={deposit.id}>
+            {deposit.amount} was deposited to account ID {deposit.accountId} on {deposit.createdAt.slice(0,10)}
           </div>)
           : null}
         </div>
+
+        <div>
+            {this.state.allTransfers ? this.state.allTransfers.map(transfer =>
+          <div key={transfer.id}>
+  {transfer.outgoing.amount} was taken out of account ID {transfer.outgoing.accountId} and {transfer.incoming.amount} was deposited into account ID {transfer.incoming.accountId} on {transfer.createdAt.slice(0,10)}
+          </div>)
+          : null}
+        </div>
+
       </div>
     )
   }
