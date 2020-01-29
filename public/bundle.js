@@ -952,15 +952,15 @@ var Transactions = function (_Component) {
             return _react2.default.createElement(
               'div',
               { key: transfer.id },
-              transfer.outgoing.amount,
+              transfer.outgoing_amt,
               ' was taken out of account ID ',
-              transfer.outgoing.accountId,
+              transfer.fromaccountid,
               ' and ',
-              transfer.incoming.amount,
+              transfer.incoming_amt,
               ' was deposited into account ID ',
-              transfer.incoming.accountId,
+              transfer.intoaccountid,
               ' on ',
-              transfer.createdAt.slice(0, 10)
+              transfer.thedate.slice(0, 10)
             );
           }) : null
         )
