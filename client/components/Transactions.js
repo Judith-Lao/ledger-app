@@ -64,7 +64,7 @@ export default class Transactions extends Component {
         <div>
             {this.state.allTransfers ? this.state.allTransfers.map(transfer =>
           <div key={transfer.id}>
-  {transfer.outgoing.amount} was taken out of account ID {transfer.outgoing.accountId} and {transfer.incoming.amount} was deposited into account ID {transfer.incoming.accountId} on {transfer.createdAt.slice(0,10)}
+  {transfer.outgoing_amt} was taken out of account ID {transfer.fromaccountid} and {transfer.incoming_amt} was deposited into account ID {transfer.intoaccountid} on {transfer.thedate.slice(0,10)}
           </div>)
           : null}
         </div>
