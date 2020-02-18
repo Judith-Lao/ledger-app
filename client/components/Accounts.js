@@ -39,19 +39,13 @@ export default class Accounts extends Component {
           {this.state.accounts ? this.state.accounts.map(account => <SingleAccount key={account.id} account={account}/> ) : null}
         </div>
 
-        <div class="form_container">
+        <div class="form-container">
 
-        <div class="form_wrapper">
-          <AddAccount autorefresh={this.incorporateUpdates}/>
-        </div>
+        <AddAccount autorefresh={this.incorporateUpdates}/>
 
-        <div class="form_wrapper">
-          <DepositMoney autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
-        </div>
+        <DepositMoney autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
 
-        <div class="form_wrapper">
-          <Transfer autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
-        </div>
+        <Transfer autorefresh={this.incorporateUpdates} accounts={this.state.accounts}/>
 
         </div>
       </div>

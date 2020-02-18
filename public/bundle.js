@@ -147,7 +147,7 @@ var Main = function Main() {
         _react2.default.createElement(
           'h1',
           null,
-          'Welcome to Ledger App'
+          'Ledger App'
         ),
         _react2.default.createElement(
           'div',
@@ -320,22 +320,10 @@ var Accounts = function (_Component) {
         ),
         _react2.default.createElement(
           'div',
-          { 'class': 'form_container' },
-          _react2.default.createElement(
-            'div',
-            { 'class': 'form_wrapper' },
-            _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates })
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'form_wrapper' },
-            _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'form_wrapper' },
-            _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
-          )
+          { 'class': 'form-container' },
+          _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates }),
+          _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts }),
+          _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
         )
       );
     }
@@ -456,49 +444,37 @@ var AddAccount = function (_Component) {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        'div',
+        'form',
         null,
-        _react2.default.createElement(
-          'form',
+        this.state.invalid ? _react2.default.createElement(
+          'div',
           null,
-          this.state.invalid ? _react2.default.createElement(
-            'div',
-            null,
-            'Sorry, you can only open an account with USD, EUR, BRL, or INR.'
-          ) : null,
+          'Sorry, you can only open an account with USD, EUR, BRL, or INR.'
+        ) : null,
+        _react2.default.createElement(
+          'div',
+          null,
           _react2.default.createElement(
-            'div',
-            { 'class': 'col-25' },
-            _react2.default.createElement(
-              'label',
-              { htmlFor: 'type' },
-              'Type of Currency:'
-            )
+            'label',
+            { htmlFor: 'type' },
+            'Type of Currency:'
           ),
+          _react2.default.createElement('input', { type: 'text', name: 'type', 'class': 'input-text', onChange: this.handleChange })
+        ),
+        _react2.default.createElement(
+          'div',
+          null,
           _react2.default.createElement(
-            'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'type', onChange: this.handleChange })
+            'label',
+            { htmlFor: 'amount' },
+            'Amount:'
           ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-25' },
-            _react2.default.createElement(
-              'label',
-              { htmlFor: 'amount' },
-              'Amount:'
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
-          ),
-          _react2.default.createElement(
-            'button',
-            { type: 'button', onClick: this.handleSubmit },
-            'New Account'
-          )
+          _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
+        ),
+        _react2.default.createElement(
+          'button',
+          { type: 'button', onClick: this.handleSubmit },
+          'New Account'
         )
       );
     }
@@ -632,31 +608,23 @@ var DepositMoney = function (_Component) {
           ) : null,
           _react2.default.createElement(
             'div',
-            { 'class': 'col-25' },
+            null,
             _react2.default.createElement(
               'label',
               { htmlFor: 'type' },
               'Account #'
-            )
+            ),
+            _react2.default.createElement('input', { type: 'text', name: 'accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'accountId', onChange: this.handleChange })
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-25' },
+            null,
             _react2.default.createElement(
               'label',
               { htmlFor: 'amount' },
               'How much money would you like to deposit?'
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
+            ),
+            _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'button',
@@ -1213,42 +1181,34 @@ var Transfer = function (_Component) {
           ) : null,
           _react2.default.createElement(
             'div',
-            { 'class': 'col-25' },
+            null,
             _react2.default.createElement(
               'label',
               { htmlFor: 'type' },
               'Transfer from Account #:'
-            )
+            ),
+            _react2.default.createElement('input', { type: 'text', name: 'from_accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'from_accountId', onChange: this.handleChange })
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-25' },
+            null,
             _react2.default.createElement(
               'label',
               { htmlFor: 'amount' },
               'How much money would you like to transfer out of this account?'
-            )
+            ),
+            _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
-            { 'class': 'col-75' },
-            _react2.default.createElement('input', { type: 'text', name: 'amount', onChange: this.handleChange })
-          ),
-          _react2.default.createElement(
-            'div',
-            { 'class': 'col-25' },
+            null,
             _react2.default.createElement(
               'label',
               { htmlFor: 'amount' },
               'Into Account #:'
-            )
+            ),
+            _react2.default.createElement('input', { type: 'text', name: 'to_accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'to_accountId', onChange: this.handleChange }),
           _react2.default.createElement(
             'button',
             { type: 'button', onClick: this.handleSubmit },

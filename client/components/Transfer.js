@@ -114,26 +114,20 @@ export default class Transfer extends Component {
     <div>
       <form>
         {this.state.overdraft ? <div>Sorry, you do not have enough money in this account to transfer.</div>: null}
-        <div class="col-25">
+        <div>
         <label htmlFor="type">Transfer from Account #:</label>
-        </div>
-        <div class="col-75">
-        <input type ="text" name="from_accountId" onChange={this.handleChange}/>
+        <input type ="text" name="from_accountId" class="input-text" onChange={this.handleChange}/>
         </div>
 
-        <div class="col-25">
+        <div>
         <label htmlFor="amount">How much money would you like to transfer out of this account?</label>
-        </div>
-        <div class="col-75">
-        <input type ="text" name="amount" onChange={this.handleChange}/>
+        <input type ="text" name="amount" class="input-text"  onChange={this.handleChange}/>
         </div>
 
-        <div class="col-25">
+        <div>
         <label htmlFor="amount">Into Account #:</label>
+        <input type ="text" name="to_accountId" class="input-text" onChange={this.handleChange}/>
         </div>
-        {/* <div class="col-75"> */}
-        <input type ="text" name="to_accountId" onChange={this.handleChange}/>
-        {/* </div> */}
 
         <button type="button" onClick={this.handleSubmit}>
         Transfer

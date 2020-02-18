@@ -1,3 +1,11 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color:#181818;
+}
+
 .account {
   font-family: Georgia, "Times New Roman",
         Times, serif;
@@ -7,6 +15,32 @@
   justify-items: center;
   color: black;
   background-color: #f2f2f2;
+}
+
+.form-container {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  align-items: center;
+}
+
+.form-container label {
+  font-size: 0.9rem;
+  line-height: 2rem;
+  font-weight: 500;
+}
+
+.form-container .input-text {
+  width: 100%;
+  border: 1px solid #555;
+  line-height: 1.3rem;
+}
+
+.form-container button {
+  margin-top: 20px;
+  height: 1.3rem;
+  width: 100%;
 }
 
 .container {
@@ -35,20 +69,4 @@
   background-color: #f2f2f2;
 }
 
-body {
-  background-color: rgb(42, 97, 179)
-}
 
-/* Floating column for labels: 25% width */
-.col-25 {
-  float: left;
-  width: 25%;
-  margin-top: 6px;
-}
-
-/* Floating column for inputs: 75% width */
-.col-75 {
-  float: left;
-  width: 75%;
-  margin-top: 6px;
-}

@@ -37,34 +37,22 @@ export default class AddAccount extends Component {
 
   render() {
     return(
-    <div>
       <form>
       {this.state.invalid ? <div>Sorry, you can only open an account with USD, EUR, BRL, or INR.</div>: null}
-        {/* <div class="row"> */}
-        <div class="col-25">
+        <div>
         <label htmlFor="type">Type of Currency:</label>
+        <input type ="text" name="type" class="input-text" onChange={this.handleChange}/>
         </div>
-        <div class="col-75">
-        <input type ="text" name="type" onChange={this.handleChange}/>
-        </div>
-        {/* </div> */}
 
-        {/* <div class="row"> */}
-        <div class="col-25">
+        <div>
         <label htmlFor="amount">Amount:</label>
+        <input type ="text" name="amount" class="input-text" onChange={this.handleChange}/>
         </div>
-        <div class="col-75">
-        <input type ="text" name="amount" onChange={this.handleChange}/>
-        </div>
-        {/* </div> */}
 
-        {/* <div class="col-75"> */}
         <button type="button" onClick={this.handleSubmit}>
         New Account
         </button>
-        {/* </div> */}
       </form>
-    </div>
     )}
 
 }

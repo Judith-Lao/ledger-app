@@ -17,7 +17,7 @@ const Main = () => {
         </nav>
 
         <main>
-          <h1>Welcome to Ledger App</h1>
+          <h1>Ledger App</h1>
           <div>
             <Route exact path='/accounts' component={Accounts} />
             <Route exact path='/transactions' component={Transactions} />
