@@ -5,9 +5,9 @@ export default class DepositMoney extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      accountId: 0,
+      accountId: '',
       isTransfer: false,
-      amount: 0,
+      amount: '',
       invalid: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -31,26 +31,32 @@ export default class DepositMoney extends Component {
     else {
       await axios.post('/api/transactions/incoming', this.state)
       this.props.autorefresh()
+      this.setState({
+        accountId: '',
+        isTransfer: false,
+        amount: '',
+        invalid: false
+      })
     }
   }
 
   render() {
     return(
     <div>
-      <form>
+      <form onSubmit={this.handleSubmit}>
       {this.state.invalid ? <div>This account does not exist. </div>: null}
 
       <div>
         <label htmlFor="type">Account #</label>
-        <input type ="text" name="accountId" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.accountId} name="accountId" class="input-text" onChange={this.handleChange}/>
       </div>
 
       <div>
         <label htmlFor="amount">How much money would you like to deposit?</label>
-        <input type ="text" name="amount" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.amount} name="amount" class="input-text" onChange={this.handleChange}/>
       </div>
 
-      <button type="button" onClick={this.handleSubmit}>
+      <button type="submit">
         Deposit
       </button>
 

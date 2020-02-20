@@ -6,7 +6,7 @@ export default class AddAccount extends Component {
     super(props)
     this.state = {
       type: '',
-      amount: 0,
+      amount: '',
       invalid: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -25,6 +25,11 @@ export default class AddAccount extends Component {
     if (["USD", "EUR", "BRL", "INR"].includes(this.state.type)) {
       await axios.post('/api/accounts', this.state)
       this.props.autorefresh()
+      this.setState({
+        type: '',
+        amount: '',
+        invalid: false
+      })
     }
 
     else {
@@ -37,19 +42,19 @@ export default class AddAccount extends Component {
 
   render() {
     return(
-      <form>
+      <form onSubmit={this.handleSubmit}>
       {this.state.invalid ? <div>Sorry, you can only open an account with USD, EUR, BRL, or INR.</div>: null}
         <div>
         <label htmlFor="type">Type of Currency:</label>
-        <input type ="text" name="type" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.type} name="type" class="input-text" onChange={this.handleChange}/>
         </div>
 
         <div>
         <label htmlFor="amount">Amount:</label>
-        <input type ="text" name="amount" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.amount} name="amount" class="input-text" onChange={this.handleChange}/>
         </div>
 
-        <button type="button" onClick={this.handleSubmit}>
+        <button type="submit" >
         New Account
         </button>
       </form>

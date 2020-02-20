@@ -5,10 +5,10 @@ export default class Transfer extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      from_accountId: 0,
+      from_accountId: '',
       isConversion: '',
-      amount: 0,
-      to_accountId: 0,
+      amount: '',
+      to_accountId: '',
       overdraft: ''
     }
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -61,12 +61,20 @@ export default class Transfer extends Component {
 
         let responseIncoming = await axios.get('/api/transactions/incoming')
         let responseOutgoing = await axios.get('/api/transactions/outgoing')
+        await this.setState({
+          from_accountId: '',
+          isConversion: '',
+          amount: '',
+          to_accountId: '',
+          overdraft: ''
+        })
         await axios.post('/api/transactions/transfer', {
           //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
           isConversion: false,
           outgoingTransactionId: responseOutgoing.data.length,
           incomingTransactionId: responseIncoming.data.length
         })
+
       }
       else {
         //conversionrate.data.rate accesses the multiplier
@@ -97,6 +105,16 @@ export default class Transfer extends Component {
 
         let responseIncoming = await axios.get('/api/transactions/incoming')
         let responseOutgoing = await axios.get('/api/transactions/outgoing')
+
+        await this.setState({
+          from_accountId: '',
+          isConversion: '',
+          amount: '',
+          to_accountId: '',
+          overdraft: ''
+        })
+        console.log("no")
+
         await axios.post('/api/transactions/transfer', {
           //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
           isConversion: true,
@@ -105,6 +123,7 @@ export default class Transfer extends Component {
         })
 
       }
+
     }
 
   }
@@ -112,24 +131,24 @@ export default class Transfer extends Component {
   render() {
     return(
     <div>
-      <form>
+      <form onSubmit={this.handleSubmit}>
         {this.state.overdraft ? <div>Sorry, you do not have enough money in this account to transfer.</div>: null}
         <div>
         <label htmlFor="type">Transfer from Account #:</label>
-        <input type ="text" name="from_accountId" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.from_accountId} name="from_accountId" class="input-text" onChange={this.handleChange}/>
         </div>
 
         <div>
         <label htmlFor="amount">How much money would you like to transfer out of this account?</label>
-        <input type ="text" name="amount" class="input-text"  onChange={this.handleChange}/>
+        <input type ="text" value={this.state.amount} name="amount" class="input-text"  onChange={this.handleChange}/>
         </div>
 
         <div>
         <label htmlFor="amount">Into Account #:</label>
-        <input type ="text" name="to_accountId" class="input-text" onChange={this.handleChange}/>
+        <input type ="text" value={this.state.to_accountId} name="to_accountId" class="input-text" onChange={this.handleChange}/>
         </div>
 
-        <button type="button" onClick={this.handleSubmit}>
+        <button type="submit">
         Transfer
         </button>
 

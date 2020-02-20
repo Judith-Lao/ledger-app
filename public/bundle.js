@@ -382,7 +382,7 @@ var AddAccount = function (_Component) {
 
     _this.state = {
       type: '',
-      amount: 0,
+      amount: '',
       invalid: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
@@ -408,7 +408,7 @@ var AddAccount = function (_Component) {
                 event.preventDefault();
 
                 if (!["USD", "EUR", "BRL", "INR"].includes(this.state.type)) {
-                  _context.next = 7;
+                  _context.next = 8;
                   break;
                 }
 
@@ -417,16 +417,21 @@ var AddAccount = function (_Component) {
 
               case 4:
                 this.props.autorefresh();
-                _context.next = 9;
+                this.setState({
+                  type: '',
+                  amount: '',
+                  invalid: false
+                });
+                _context.next = 10;
                 break;
 
-              case 7:
+              case 8:
                 this.setState({ invalid: true });
                 setTimeout(function () {
                   _this2.setState({ invalid: false });
                 }, 3000);
 
-              case 9:
+              case 10:
               case 'end':
                 return _context.stop();
             }
@@ -445,7 +450,7 @@ var AddAccount = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'form',
-        null,
+        { onSubmit: this.handleSubmit },
         this.state.invalid ? _react2.default.createElement(
           'div',
           null,
@@ -459,7 +464,7 @@ var AddAccount = function (_Component) {
             { htmlFor: 'type' },
             'Type of Currency:'
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'type', 'class': 'input-text', onChange: this.handleChange })
+          _react2.default.createElement('input', { type: 'text', value: this.state.type, name: 'type', 'class': 'input-text', onChange: this.handleChange })
         ),
         _react2.default.createElement(
           'div',
@@ -469,11 +474,11 @@ var AddAccount = function (_Component) {
             { htmlFor: 'amount' },
             'Amount:'
           ),
-          _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
+          _react2.default.createElement('input', { type: 'text', value: this.state.amount, name: 'amount', 'class': 'input-text', onChange: this.handleChange })
         ),
         _react2.default.createElement(
           'button',
-          { type: 'button', onClick: this.handleSubmit },
+          { type: 'submit' },
           'New Account'
         )
       );
@@ -532,9 +537,9 @@ var DepositMoney = function (_Component) {
     var _this = _possibleConstructorReturn(this, (DepositMoney.__proto__ || Object.getPrototypeOf(DepositMoney)).call(this, props));
 
     _this.state = {
-      accountId: 0,
+      accountId: '',
       isTransfer: false,
-      amount: 0,
+      amount: '',
       invalid: false
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
@@ -568,7 +573,7 @@ var DepositMoney = function (_Component) {
                 setTimeout(function () {
                   _this2.setState({ invalid: false });
                 }, 3000);
-                _context.next = 9;
+                _context.next = 10;
                 break;
 
               case 6:
@@ -577,8 +582,14 @@ var DepositMoney = function (_Component) {
 
               case 8:
                 this.props.autorefresh();
+                this.setState({
+                  accountId: '',
+                  isTransfer: false,
+                  amount: '',
+                  invalid: false
+                });
 
-              case 9:
+              case 10:
               case 'end':
                 return _context.stop();
             }
@@ -600,7 +611,7 @@ var DepositMoney = function (_Component) {
         null,
         _react2.default.createElement(
           'form',
-          null,
+          { onSubmit: this.handleSubmit },
           this.state.invalid ? _react2.default.createElement(
             'div',
             null,
@@ -614,7 +625,7 @@ var DepositMoney = function (_Component) {
               { htmlFor: 'type' },
               'Account #'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'accountId', 'class': 'input-text', onChange: this.handleChange })
+            _react2.default.createElement('input', { type: 'text', value: this.state.accountId, name: 'accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
@@ -624,11 +635,11 @@ var DepositMoney = function (_Component) {
               { htmlFor: 'amount' },
               'How much money would you like to deposit?'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
+            _react2.default.createElement('input', { type: 'text', value: this.state.amount, name: 'amount', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'button',
-            { type: 'button', onClick: this.handleSubmit },
+            { type: 'submit' },
             'Deposit'
           )
         )
@@ -988,10 +999,10 @@ var Transfer = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Transfer.__proto__ || Object.getPrototypeOf(Transfer)).call(this, props));
 
     _this.state = {
-      from_accountId: 0,
+      from_accountId: '',
       isConversion: '',
-      amount: 0,
-      to_accountId: 0,
+      amount: '',
+      to_accountId: '',
       overdraft: ''
     };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
@@ -1044,12 +1055,12 @@ var Transfer = function (_Component) {
                 setTimeout(function () {
                   _this2.setState({ overdraft: false });
                 }, 3000);
-                _context.next = 47;
+                _context.next = 52;
                 break;
 
               case 9:
                 if (this.state.isConversion) {
-                  _context.next = 25;
+                  _context.next = 27;
                   break;
                 }
 
@@ -1082,6 +1093,16 @@ var Transfer = function (_Component) {
               case 20:
                 responseOutgoing = _context.sent;
                 _context.next = 23;
+                return this.setState({
+                  from_accountId: '',
+                  isConversion: '',
+                  amount: '',
+                  to_accountId: '',
+                  overdraft: ''
+                });
+
+              case 23:
+                _context.next = 25;
                 return _axios2.default.post('/api/transactions/transfer', {
                   //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
                   isConversion: false,
@@ -1089,22 +1110,22 @@ var Transfer = function (_Component) {
                   incomingTransactionId: responseIncoming.data.length
                 });
 
-              case 23:
-                _context.next = 47;
+              case 25:
+                _context.next = 52;
                 break;
 
-              case 25:
-                _context.next = 27;
+              case 27:
+                _context.next = 29;
                 return _axios2.default.get('/api/accounts/' + this.state.from_accountId);
 
-              case 27:
+              case 29:
                 fromAccount = _context.sent;
-                _context.next = 30;
+                _context.next = 32;
                 return _axios2.default.get('/api/accounts/' + this.state.to_accountId);
 
-              case 30:
+              case 32:
                 toAccount = _context.sent;
-                _context.next = 33;
+                _context.next = 35;
                 return _axios2.default.get('/api/conversionrates', {
                   params: {
                     fromCurrencyType: fromAccount.data.type,
@@ -1112,38 +1133,50 @@ var Transfer = function (_Component) {
                   }
                 });
 
-              case 33:
+              case 35:
                 conversionrate = _context.sent;
-                _context.next = 36;
+                _context.next = 38;
                 return _axios2.default.post('/api/transactions/outgoing', {
                   accountId: this.state.from_accountId,
                   isTransfer: true,
                   amount: this.state.amount
                 });
 
-              case 36:
-                _context.next = 38;
+              case 38:
+                _context.next = 40;
                 return _axios2.default.post('/api/transactions/incoming', {
                   accountId: this.state.to_accountId,
                   isTransfer: true,
                   amount: this.state.amount * conversionrate.data.rate
                 });
 
-              case 38:
+              case 40:
 
                 this.props.autorefresh();
 
-                _context.next = 41;
+                _context.next = 43;
                 return _axios2.default.get('/api/transactions/incoming');
 
-              case 41:
+              case 43:
                 _responseIncoming = _context.sent;
-                _context.next = 44;
+                _context.next = 46;
                 return _axios2.default.get('/api/transactions/outgoing');
 
-              case 44:
+              case 46:
                 _responseOutgoing = _context.sent;
-                _context.next = 47;
+                _context.next = 49;
+                return this.setState({
+                  from_accountId: '',
+                  isConversion: '',
+                  amount: '',
+                  to_accountId: '',
+                  overdraft: ''
+                });
+
+              case 49:
+                console.log("no");
+
+                _context.next = 52;
                 return _axios2.default.post('/api/transactions/transfer', {
                   //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
                   isConversion: true,
@@ -1151,7 +1184,7 @@ var Transfer = function (_Component) {
                   incomingTransactionId: _responseIncoming.data.length
                 });
 
-              case 47:
+              case 52:
               case 'end':
                 return _context.stop();
             }
@@ -1173,7 +1206,7 @@ var Transfer = function (_Component) {
         null,
         _react2.default.createElement(
           'form',
-          null,
+          { onSubmit: this.handleSubmit },
           this.state.overdraft ? _react2.default.createElement(
             'div',
             null,
@@ -1187,7 +1220,7 @@ var Transfer = function (_Component) {
               { htmlFor: 'type' },
               'Transfer from Account #:'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'from_accountId', 'class': 'input-text', onChange: this.handleChange })
+            _react2.default.createElement('input', { type: 'text', value: this.state.from_accountId, name: 'from_accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
@@ -1197,7 +1230,7 @@ var Transfer = function (_Component) {
               { htmlFor: 'amount' },
               'How much money would you like to transfer out of this account?'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'amount', 'class': 'input-text', onChange: this.handleChange })
+            _react2.default.createElement('input', { type: 'text', value: this.state.amount, name: 'amount', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'div',
@@ -1207,11 +1240,11 @@ var Transfer = function (_Component) {
               { htmlFor: 'amount' },
               'Into Account #:'
             ),
-            _react2.default.createElement('input', { type: 'text', name: 'to_accountId', 'class': 'input-text', onChange: this.handleChange })
+            _react2.default.createElement('input', { type: 'text', value: this.state.to_accountId, name: 'to_accountId', 'class': 'input-text', onChange: this.handleChange })
           ),
           _react2.default.createElement(
             'button',
-            { type: 'button', onClick: this.handleSubmit },
+            { type: 'submit' },
             'Transfer'
           )
         )
