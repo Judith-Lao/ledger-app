@@ -223,7 +223,8 @@ var Accounts = function (_Component) {
     var _this = _possibleConstructorReturn(this, (Accounts.__proto__ || Object.getPrototypeOf(Accounts)).call(this, props));
 
     _this.state = {
-      accounts: []
+      accounts: [],
+      totalMoneyMoved: 0
     };
     _this.incorporateUpdates = _this.incorporateUpdates.bind(_this);
     return _this;
@@ -268,30 +269,47 @@ var Accounts = function (_Component) {
       return componentDidMount;
     }()
   }, {
-    key: 'incorporateUpdates',
+    key: 'convertToUSD',
     value: function () {
-      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var _ref4, data;
-
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(value, accountId) {
+        var isUSD, conversionRate;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.next = 2;
-                return _axios2.default.get('/api/accounts');
+                //takes in value and accountId
+                //if accountId.type is USD, return value
+                //else, make the get request and return the conversionrate*value
+                debugger;
+                isUSD = this.state.accounts[accountId].type === "USD";
 
-              case 2:
-                _ref4 = _context2.sent;
-                data = _ref4.data;
+                debugger;
 
-                data.sort(function (a, b) {
-                  return a.id - b.id;
+                if (!isUSD) {
+                  _context2.next = 8;
+                  break;
+                }
+
+                debugger;
+                return _context2.abrupt('return', value);
+
+              case 8:
+                debugger;
+                _context2.next = 11;
+                return _axios2.default.get('/api/conversionrates', {
+                  params: {
+                    fromCurrencyType: "EUR",
+                    toCurrencyType: "USD"
+                  }
                 });
-                this.setState({
-                  accounts: data
-                });
 
-              case 6:
+              case 11:
+                conversionRate = _context2.sent;
+
+                debugger;
+                return _context2.abrupt('return', value * conversionRate.data.rate);
+
+              case 14:
               case 'end':
                 return _context2.stop();
             }
@@ -299,8 +317,80 @@ var Accounts = function (_Component) {
         }, _callee2, this);
       }));
 
-      function incorporateUpdates() {
+      function convertToUSD(_x, _x2) {
         return _ref3.apply(this, arguments);
+      }
+
+      return convertToUSD;
+    }()
+  }, {
+    key: 'incorporateUpdates',
+    value: function () {
+      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(value, accountId) {
+        var _this2 = this;
+
+        var _ref5, data, USDmoved;
+
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return _axios2.default.get('/api/accounts');
+
+              case 2:
+                _ref5 = _context3.sent;
+                data = _ref5.data;
+
+                data.sort(function (a, b) {
+                  return a.id - b.id;
+                });
+                debugger;
+                _context3.next = 8;
+                return this.convertToUSD(value, accountId);
+
+              case 8:
+                USDmoved = _context3.sent;
+
+                debugger;
+                // // if (isUSD) {
+                // //   USDmoved = value
+                // //   console.log("within USD", typeof USDmoved)
+                // // }
+
+                // if (!isUSD) {
+                //   this.convertToUSD()
+                // }
+                // // if (this.state.accounts[accountId].type === "EUR") {
+                //   const conversionRate = await axios.get('/api/conversionrates', {
+                //   params: {
+                //     fromCurrencyType: "EUR",
+                //     toCurrencyType: "USD"
+                //   }
+                //   })
+                //   USDmoved = value * conversionRate.data.rate
+
+                //   // USDmoved = Number(value) * Number(conversionRate)
+                //   console.log("EUR to USD", USDmoved)
+                // }
+
+                this.setState({
+                  accounts: data,
+                  totalMoneyMoved: USDmoved
+                }, function () {
+                  return console.log(_this2.state.totalMoneyMoved);
+                });
+
+              case 11:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function incorporateUpdates(_x3, _x4) {
+        return _ref4.apply(this, arguments);
       }
 
       return incorporateUpdates;
@@ -310,17 +400,24 @@ var Accounts = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { 'class': 'container' },
+        { className: 'container' },
         _react2.default.createElement(
           'div',
-          { 'class': 'accountcontainer' },
+          { className: 'accountcontainer' },
           this.state.accounts ? this.state.accounts.map(function (account) {
             return _react2.default.createElement(_SingleAccount2.default, { key: account.id, account: account });
           }) : null
         ),
         _react2.default.createElement(
+          'p',
+          null,
+          'Since opening this application, you have moved ',
+          Number(this.state.totalMoneyMoved),
+          ' USD.'
+        ),
+        _react2.default.createElement(
           'div',
-          { 'class': 'form-container' },
+          { className: 'form-container' },
           _react2.default.createElement(_AddAccount2.default, { autorefresh: this.incorporateUpdates }),
           _react2.default.createElement(_DepositMoney2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts }),
           _react2.default.createElement(_Transfer2.default, { autorefresh: this.incorporateUpdates, accounts: this.state.accounts })
@@ -1008,6 +1105,9 @@ var Transfer = function (_Component) {
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.handleChange = _this.handleChange.bind(_this);
     _this.isConversion = _this.transferOrConversion.bind(_this);
+    _this.transferMoney = _this.transferMoney.bind(_this);
+    _this.convertMoney = _this.convertMoney.bind(_this);
+    _this.setOverdraftNotification = _this.setOverdraftNotification.bind(_this);
     return _this;
   }
 
@@ -1027,72 +1127,43 @@ var Transfer = function (_Component) {
       }
     }
   }, {
-    key: 'handleSubmit',
+    key: 'transferMoney',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(event) {
-        var _this2 = this;
-
-        var accounts, responseIncoming, responseOutgoing, fromAccount, toAccount, conversionrate, _responseIncoming, _responseOutgoing;
-
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+        var responseIncoming, responseOutgoing;
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                accounts = this.props.accounts;
-
-                event.preventDefault();
-                _context.next = 4;
-                return this.transferOrConversion(accounts);
-
-              case 4:
-                if (!(this.state.amount > accounts[this.state.from_accountId - 1].amount)) {
-                  _context.next = 9;
-                  break;
-                }
-
-                //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
-                this.setState({ overdraft: true });
-                setTimeout(function () {
-                  _this2.setState({ overdraft: false });
-                }, 3000);
-                _context.next = 52;
-                break;
-
-              case 9:
-                if (this.state.isConversion) {
-                  _context.next = 27;
-                  break;
-                }
-
-                _context.next = 12;
+                _context.next = 2;
                 return _axios2.default.post('/api/transactions/incoming', {
                   accountId: this.state.to_accountId,
                   isTransfer: true,
                   amount: this.state.amount
                 });
 
-              case 12:
-                _context.next = 14;
+              case 2:
+                _context.next = 4;
                 return _axios2.default.post('/api/transactions/outgoing', {
                   accountId: this.state.from_accountId,
                   isTransfer: true,
                   amount: this.state.amount
                 });
 
-              case 14:
-                this.props.autorefresh();
+              case 4:
+                this.props.autorefresh(this.state.amount, this.state.from_accountId);
 
-                _context.next = 17;
+                _context.next = 7;
                 return _axios2.default.get('/api/transactions/incoming');
 
-              case 17:
+              case 7:
                 responseIncoming = _context.sent;
-                _context.next = 20;
+                _context.next = 10;
                 return _axios2.default.get('/api/transactions/outgoing');
 
-              case 20:
+              case 10:
                 responseOutgoing = _context.sent;
-                _context.next = 23;
+                _context.next = 13;
                 return this.setState({
                   from_accountId: '',
                   isConversion: '',
@@ -1101,8 +1172,8 @@ var Transfer = function (_Component) {
                   overdraft: ''
                 });
 
-              case 23:
-                _context.next = 25;
+              case 13:
+                _context.next = 15;
                 return _axios2.default.post('/api/transactions/transfer', {
                   //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
                   isConversion: false,
@@ -1110,22 +1181,40 @@ var Transfer = function (_Component) {
                   incomingTransactionId: responseIncoming.data.length
                 });
 
-              case 25:
-                _context.next = 52;
-                break;
+              case 15:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
 
-              case 27:
-                _context.next = 29;
+      function transferMoney() {
+        return _ref.apply(this, arguments);
+      }
+
+      return transferMoney;
+    }()
+  }, {
+    key: 'convertMoney',
+    value: function () {
+      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        var fromAccount, toAccount, conversionrate, responseIncoming, responseOutgoing;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
                 return _axios2.default.get('/api/accounts/' + this.state.from_accountId);
 
-              case 29:
-                fromAccount = _context.sent;
-                _context.next = 32;
+              case 2:
+                fromAccount = _context2.sent;
+                _context2.next = 5;
                 return _axios2.default.get('/api/accounts/' + this.state.to_accountId);
 
-              case 32:
-                toAccount = _context.sent;
-                _context.next = 35;
+              case 5:
+                toAccount = _context2.sent;
+                _context2.next = 8;
                 return _axios2.default.get('/api/conversionrates', {
                   params: {
                     fromCurrencyType: fromAccount.data.type,
@@ -1133,38 +1222,38 @@ var Transfer = function (_Component) {
                   }
                 });
 
-              case 35:
-                conversionrate = _context.sent;
-                _context.next = 38;
+              case 8:
+                conversionrate = _context2.sent;
+                _context2.next = 11;
                 return _axios2.default.post('/api/transactions/outgoing', {
                   accountId: this.state.from_accountId,
                   isTransfer: true,
                   amount: this.state.amount
                 });
 
-              case 38:
-                _context.next = 40;
+              case 11:
+                _context2.next = 13;
                 return _axios2.default.post('/api/transactions/incoming', {
                   accountId: this.state.to_accountId,
                   isTransfer: true,
                   amount: this.state.amount * conversionrate.data.rate
                 });
 
-              case 40:
+              case 13:
 
-                this.props.autorefresh();
+                this.props.autorefresh(this.state.amount, this.state.from_accountId);
 
-                _context.next = 43;
+                _context2.next = 16;
                 return _axios2.default.get('/api/transactions/incoming');
 
-              case 43:
-                _responseIncoming = _context.sent;
-                _context.next = 46;
+              case 16:
+                responseIncoming = _context2.sent;
+                _context2.next = 19;
                 return _axios2.default.get('/api/transactions/outgoing');
 
-              case 46:
-                _responseOutgoing = _context.sent;
-                _context.next = 49;
+              case 19:
+                responseOutgoing = _context2.sent;
+                _context2.next = 22;
                 return this.setState({
                   from_accountId: '',
                   isConversion: '',
@@ -1173,27 +1262,95 @@ var Transfer = function (_Component) {
                   overdraft: ''
                 });
 
-              case 49:
-                console.log("no");
-
-                _context.next = 52;
+              case 22:
+                _context2.next = 24;
                 return _axios2.default.post('/api/transactions/transfer', {
                   //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
                   isConversion: true,
-                  outgoingTransactionId: _responseOutgoing.data.length,
-                  incomingTransactionId: _responseIncoming.data.length
+                  outgoingTransactionId: responseOutgoing.data.length,
+                  incomingTransactionId: responseIncoming.data.length
                 });
 
-              case 52:
+              case 24:
               case 'end':
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
+      }));
+
+      function convertMoney() {
+        return _ref2.apply(this, arguments);
+      }
+
+      return convertMoney;
+    }()
+  }, {
+    key: 'setOverdraftNotification',
+    value: function setOverdraftNotification() {
+      var _this2 = this;
+
+      //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+      this.setState({ overdraft: true });
+      setTimeout(function () {
+        _this2.setState({ overdraft: false });
+      }, 3000);
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function () {
+      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(event) {
+        var accounts, accountToWithdrawFrom, isOverdrafted;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                accounts = this.props.accounts;
+                accountToWithdrawFrom = this.state.from_accountId - 1;
+                isOverdrafted = this.state.amount > accounts[accountToWithdrawFrom].amount;
+
+                event.preventDefault();
+
+                _context3.next = 6;
+                return this.transferOrConversion(accounts);
+
+              case 6:
+                if (!isOverdrafted) {
+                  _context3.next = 9;
+                  break;
+                }
+
+                this.setOverdraftNotification();
+                return _context3.abrupt('return');
+
+              case 9:
+                if (this.state.isConversion) {
+                  _context3.next = 12;
+                  break;
+                }
+
+                this.transferMoney();
+                return _context3.abrupt('return');
+
+              case 12:
+                if (!this.state.isConversion) {
+                  _context3.next = 15;
+                  break;
+                }
+
+                this.convertMoney();
+                return _context3.abrupt('return');
+
+              case 15:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
       }));
 
       function handleSubmit(_x) {
-        return _ref.apply(this, arguments);
+        return _ref3.apply(this, arguments);
       }
 
       return handleSubmit;

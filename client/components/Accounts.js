@@ -10,7 +10,8 @@ export default class Accounts extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      accounts: []
+      accounts: [],
+      totalMoneyMoved: 0
     }
     this.incorporateUpdates = this.incorporateUpdates.bind(this)
   }
@@ -23,23 +24,50 @@ export default class Accounts extends Component {
     })
   }
 
-  async incorporateUpdates () {
+  async convertToUSD(value, accountId) {
+    //takes in value and accountId
+    //if accountId.type is USD, return value
+    //else, make the get request and return the conversionrate*value
+    const isUSD = this.state.accounts[accountId].type === "USD"
+    if (isUSD) {
+      return value
+    }
+    else {
+      const conversionRate = await axios.get('/api/conversionrates', {
+        params: {
+          fromCurrencyType: "EUR",
+          toCurrencyType: "USD"
+        }
+        })
+        return value * conversionRate.data.rate
+    }
+  }
+
+  async incorporateUpdates (value, accountId) {
     //what is a better way than a callback function to autorefresh, because this repeats componentDidMount code
     const {data} = await axios.get('/api/accounts')
     data.sort(function(a,b) {return a.id - b.id})
+
+    const USDmoved = await this.convertToUSD(value, accountId)
+
     this.setState({
-      accounts: data
-    })
+      accounts: data,
+      totalMoneyMoved: USDmoved
+    }, () => console.log(this.state.totalMoneyMoved))
   }
 
   render() {
     return (
-      <div class="container">
-        <div class="accountcontainer">
+      <div className="container">
+        <div className="accountcontainer">
           {this.state.accounts ? this.state.accounts.map(account => <SingleAccount key={account.id} account={account}/> ) : null}
         </div>
 
-        <div class="form-container">
+        <p>
+          Since opening this application, you have moved {Number(this.state.totalMoneyMoved)} USD.
+        </p>
+
+        <div className="form-container">
 
         <AddAccount autorefresh={this.incorporateUpdates}/>
 
