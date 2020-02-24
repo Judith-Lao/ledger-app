@@ -14,6 +14,9 @@ export default class Transfer extends Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.isConversion = this.transferOrConversion.bind(this)
+    this.transferMoney = this.transferMoney.bind(this)
+    this.convertMoney = this.convertMoney.bind(this)
+    this.setOverdraftNotification = this.setOverdraftNotification.bind(this)
   }
 
   handleChange(event) {
@@ -32,100 +35,109 @@ export default class Transfer extends Component {
     }
   }
 
-  async handleSubmit(event) {
-    let accounts = this.props.accounts
-    event.preventDefault()
-    await this.transferOrConversion(accounts)
+  async transferMoney() {
+    await axios.post('/api/transactions/incoming', {
+      accountId: this.state.to_accountId,
+      isTransfer: true,
+      amount: this.state.amount
+    })
+    await axios.post('/api/transactions/outgoing', {
+      accountId: this.state.from_accountId,
+      isTransfer: true,
+      amount: this.state.amount
+    })
+    this.props.autorefresh(this.state.amount, this.state.from_accountId)
 
-    if (this.state.amount > accounts[this.state.from_accountId -1].amount) {
-      //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
-      this.setState({overdraft: true})
+    let responseIncoming = await axios.get('/api/transactions/incoming')
+    let responseOutgoing = await axios.get('/api/transactions/outgoing')
+    await this.setState({
+      from_accountId: '',
+      isConversion: '',
+      amount: '',
+      to_accountId: '',
+      overdraft: ''
+    })
+    await axios.post('/api/transactions/transfer', {
+      //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
+      isConversion: false,
+      outgoingTransactionId: responseOutgoing.data.length,
+      incomingTransactionId: responseIncoming.data.length
+    })
+  }
+
+  async convertMoney() {
+    //conversionrate.data.rate accesses the multiplier
+    let fromAccount = await axios.get(`/api/accounts/${this.state.from_accountId}`)
+    let toAccount = await axios.get(`/api/accounts/${this.state.to_accountId}`)
+    let conversionrate = await axios.get('/api/conversionrates', {
+      params: {
+        fromCurrencyType: fromAccount.data.type,
+        toCurrencyType: toAccount.data.type
+      }
+    })
+
+    //makes the outgoing transaction
+    await axios.post('/api/transactions/outgoing', {
+      accountId: this.state.from_accountId,
+      isTransfer: true,
+      amount: this.state.amount
+    })
+
+    //makes incoming transaction
+    await axios.post('/api/transactions/incoming', {
+      accountId: this.state.to_accountId,
+      isTransfer: true,
+      amount: this.state.amount*conversionrate.data.rate
+    })
+
+    this.props.autorefresh(this.state.amount, this.state.from_accountId)
+
+    let responseIncoming = await axios.get('/api/transactions/incoming')
+    let responseOutgoing = await axios.get('/api/transactions/outgoing')
+
+    await this.setState({
+      from_accountId: '',
+      isConversion: '',
+      amount: '',
+      to_accountId: '',
+      overdraft: ''
+    })
+
+    await axios.post('/api/transactions/transfer', {
+      //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
+      isConversion: true,
+      outgoingTransactionId: responseOutgoing.data.length,
+      incomingTransactionId: responseIncoming.data.length
+    })
+  }
+
+  setOverdraftNotification() {
+    //tells you you've overdrafted the account, and then the "notification" disappears after three seconds
+    this.setState({overdraft: true})
       setTimeout(() => {
         this.setState({overdraft: false})}, 3000
       )
+  }
+
+  async handleSubmit(event) {
+    const accounts = this.props.accounts
+    const accountToWithdrawFrom = this.state.from_accountId -1
+    const isOverdrafted = this.state.amount > accounts[accountToWithdrawFrom].amount
+    event.preventDefault()
+
+    await this.transferOrConversion(accounts)
+    if (isOverdrafted) {
+      this.setOverdraftNotification()
+      return
     }
-
-    else {
-      if (!this.state.isConversion) {
-        await axios.post('/api/transactions/incoming', {
-          accountId: this.state.to_accountId,
-          isTransfer: true,
-          amount: this.state.amount
-        })
-        await axios.post('/api/transactions/outgoing', {
-          accountId: this.state.from_accountId,
-          isTransfer: true,
-          amount: this.state.amount
-        })
-        this.props.autorefresh()
-
-        let responseIncoming = await axios.get('/api/transactions/incoming')
-        let responseOutgoing = await axios.get('/api/transactions/outgoing')
-        await this.setState({
-          from_accountId: '',
-          isConversion: '',
-          amount: '',
-          to_accountId: '',
-          overdraft: ''
-        })
-        await axios.post('/api/transactions/transfer', {
-          //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
-          isConversion: false,
-          outgoingTransactionId: responseOutgoing.data.length,
-          incomingTransactionId: responseIncoming.data.length
-        })
-
-      }
-      else {
-        //conversionrate.data.rate accesses the multiplier
-        let fromAccount = await axios.get(`/api/accounts/${this.state.from_accountId}`)
-        let toAccount = await axios.get(`/api/accounts/${this.state.to_accountId}`)
-        let conversionrate = await axios.get('/api/conversionrates', {
-          params: {
-            fromCurrencyType: fromAccount.data.type,
-            toCurrencyType: toAccount.data.type
-          }
-        })
-
-        //makes the outgoing transaction
-        await axios.post('/api/transactions/outgoing', {
-          accountId: this.state.from_accountId,
-          isTransfer: true,
-          amount: this.state.amount
-        })
-
-        //makes incoming transaction
-        await axios.post('/api/transactions/incoming', {
-          accountId: this.state.to_accountId,
-          isTransfer: true,
-          amount: this.state.amount*conversionrate.data.rate
-        })
-
-        this.props.autorefresh()
-
-        let responseIncoming = await axios.get('/api/transactions/incoming')
-        let responseOutgoing = await axios.get('/api/transactions/outgoing')
-
-        await this.setState({
-          from_accountId: '',
-          isConversion: '',
-          amount: '',
-          to_accountId: '',
-          overdraft: ''
-        })
-        console.log("no")
-
-        await axios.post('/api/transactions/transfer', {
-          //to grab the specific transactions, get the id of the last outgoing transaction and the last incoming transaction
-          isConversion: true,
-          outgoingTransactionId: responseOutgoing.data.length,
-          incomingTransactionId: responseIncoming.data.length
-        })
-
-      }
-
+    if (!this.state.isConversion) {
+      this.transferMoney()
+      return
     }
-
+    if (this.state.isConversion) {
+      this.convertMoney()
+      return
+    }
   }
 
   render() {

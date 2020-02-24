@@ -76,7 +76,7 @@ router.post("/outgoing", async (req, res, next) => {
 router.get("/transfer", async (req, res, next) => {
   try {
     const JoinTable = 'SELECT transfers.id as id, transfers."createdAt" as thedate, incomings.id as intoAccountId,incomings.amount as incoming_amt,outgoings.id as fromAccountId,outgoings.amount as outgoing_amt from transfers JOIN incomings ON incomings.id="incomingId" JOIN outgoings ON outgoings.id="outgoingId"'
-    const [results, metadata] = await db.query(JoinTable)
+    const [results] = await db.query(JoinTable)
     res.send(results)
     // let allTransfers = await Transfer.findAll({
     //   include: [
